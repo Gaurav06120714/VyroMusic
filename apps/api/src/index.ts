@@ -14,6 +14,7 @@ import { recommendationRoutes } from './routes/recommendation.routes';
 import { socialRoutes } from './routes/social.routes';
 import { billingRoutes } from './routes/billing.routes';
 import { itunesRoutes } from './routes/itunes.routes';
+import { youtubeRoutes } from './routes/youtube.routes';
 
 const app = Fastify({
   logger: { level: process.env.NODE_ENV === 'production' ? 'warn' : 'info' },
@@ -55,6 +56,7 @@ async function bootstrap() {
   await app.register(socialRoutes);          // /me/profile, /artists/:id/follow, /me/stats/*  ← Phase 2
   await app.register(billingRoutes);         // /billing/*
   await app.register(itunesRoutes, { prefix: '/itunes' }); // /itunes/*
+  await app.register(youtubeRoutes);                        // /youtube/*
 
   // ── Health check ──────────────────────────────────────────────────────────
   app.get('/health', async () => ({

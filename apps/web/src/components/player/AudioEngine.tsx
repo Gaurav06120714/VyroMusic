@@ -13,8 +13,12 @@ export function AudioEngine() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const hlsRef = useRef<Hls | null>(null);
   const lastTrackIdRef = useRef<string | null>(null);
+  const isPlayingRef = useRef(false); // always-current ref to avoid stale closure
 
-  const { currentTrack, isPlaying, volume, muted, repeat, setCurrentMs, next } = usePlayerStore();
+  const { currentTrack, isPlaying, volume, muted, repeat, setCurrentMs, setDurationMs, next } = usePlayerStore();
+
+  // Keep ref in sync with state
+  isPlayingRef.current = isPlaying;
 
   // ── Load track ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -23,47 +27,78 @@ export function AudioEngine() {
     lastTrackIdRef.current = currentTrack.id;
 
     const audio = audioRef.current;
+    const trackId = currentTrack.id; // capture to detect stale loads
 
-    const loadTrack = async () => {
-      // Destroy previous HLS instance first
+    const playWhenReady = () => {
+      if (lastTrackIdRef.current !== trackId) return;
+      if (isPlayingRef.current) audio.play().catch(() => {});
+    };
+
+    // Load a URL properly — handles both HLS .m3u8 and direct audio
+    const loadUrl = (url: string, onReady: () => void) => {
       if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
 
-      // iTunes tracks: play previewUrl directly, skip stream API call
-      if (currentTrack.id.startsWith('itunes_') && currentTrack.previewUrl) {
-        audio.src = currentTrack.previewUrl;
+      if (url.includes('.m3u8') && Hls.isSupported()) {
+        const hls = new Hls({ enableWorker: true, lowLatencyMode: false });
+        hls.loadSource(url);
+        hls.attachMedia(audio);
+        hls.on(Hls.Events.MANIFEST_PARSED, onReady);
+        hlsRef.current = hls;
+      } else {
+        audio.src = url;
         audio.load();
-        if (isPlaying) audio.play().catch(() => {});
-        return;
+        audio.addEventListener('canplay', onReady, { once: true });
+      }
+    };
+
+    const fetchYtUrl = async (): Promise<string | null> => {
+      const ytQuery = encodeURIComponent(
+        `${currentTrack.title} ${currentTrack.artist?.name || ''}`
+      );
+      // Try up to 3 times
+      for (let i = 0; i < 3; i++) {
+        try {
+          const data = await api<{ url: string }>(`/api/youtube/url?q=${ytQuery}`);
+          if (data?.url) return data.url;
+        } catch { /* retry */ }
+      }
+      return null;
+    };
+
+    const loadTrack = async () => {
+      audio.pause();
+      audio.src = '';
+      if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
+
+      const previewUrl = currentTrack.previewUrl;
+
+      // Step 1: Play preview instantly so there's zero wait
+      if (previewUrl) {
+        audio.src = previewUrl;
+        audio.load();
+        audio.addEventListener('canplay', playWhenReady, { once: true });
       }
 
-      try {
-        const token = await api<{ url: string; manifestUrl?: string; previewOnly: boolean }>(
-          `/api/tracks/${currentTrack.id}/stream`
-        );
-        const url = token?.url || token?.manifestUrl;
-        if (!url) throw new Error('No stream URL');
+      // Step 2: Fetch full YouTube URL (with retries)
+      const ytUrl = await fetchYtUrl();
 
-        if (url.includes('.m3u8') && Hls.isSupported()) {
-          const hls = new Hls({ enableWorker: true, lowLatencyMode: false });
-          hls.loadSource(url);
-          hls.attachMedia(audio);
-          hls.on(Hls.Events.MANIFEST_PARSED, () => {
-            if (isPlaying) audio.play().catch(() => {});
-          });
-          hlsRef.current = hls;
-        } else {
-          // Direct MP3 (preview) or native HLS (Safari)
-          audio.src = url;
-          audio.load();
-          if (isPlaying) audio.play().catch(() => {});
-        }
-      } catch {
-        // Fallback: use previewUrl if stream fetch failed
-        if (currentTrack.previewUrl) {
-          audio.src = currentTrack.previewUrl;
-          audio.load();
-          if (isPlaying) audio.play().catch(() => {});
-        }
+      // Bail if user switched tracks while we were fetching
+      if (lastTrackIdRef.current !== trackId) return;
+
+      if (!ytUrl) return; // all retries failed — stay on preview
+
+      // Step 3: Swap to full song
+      const wasPlaying = isPlayingRef.current;
+      audio.pause();
+      audio.src = '';
+      if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
+
+      audio.src = ytUrl;
+      audio.load();
+      if (wasPlaying) {
+        audio.addEventListener('canplay', () => {
+          if (lastTrackIdRef.current === trackId) audio.play().catch(() => {});
+        }, { once: true });
       }
     };
 
@@ -96,10 +131,18 @@ export function AudioEngine() {
   return (
     <audio
       ref={audioRef}
+      onLoadedMetadata={() => {
+        const a = audioRef.current;
+        if (!a || !isFinite(a.duration)) return;
+        setDurationMs(a.duration * 1000);
+      }}
       onTimeUpdate={() => {
         const a = audioRef.current;
-        if (!a || !a.duration) return;
+        if (!a) return;
         setCurrentMs(a.currentTime * 1000);
+        if (isFinite(a.duration) && a.duration > 0) {
+          setDurationMs(a.duration * 1000);
+        }
       }}
       onEnded={handleEnded}
       style={{ display: 'none' }}

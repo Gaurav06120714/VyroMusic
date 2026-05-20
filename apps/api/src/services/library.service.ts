@@ -61,6 +61,19 @@ export class LibraryService {
     return result.rows;
   }
 
+  async getFeaturedPlaylists(limit = 10) {
+    const result = await this.db.query(
+      `SELECT p.*,
+              (SELECT COUNT(*) FROM playlist_tracks WHERE playlist_id = p.id) as track_count
+       FROM playlists p
+       WHERE p.is_public = true
+       ORDER BY p.follower_count DESC, p.created_at DESC
+       LIMIT $1`,
+      [limit]
+    );
+    return result.rows;
+  }
+
   async getPlaylist(id: string, userId?: string) {
     const result = await this.db.query(
       'SELECT * FROM playlists WHERE id = $1 AND (is_public = true OR user_id = $2)',
@@ -134,7 +147,37 @@ export class LibraryService {
        ORDER BY pt.position`,
       [playlistId]
     );
-    return result.rows;
+    return result.rows.map((row: Record<string, unknown>) => ({
+      id: row.id,
+      albumId: row.album_id,
+      artistId: row.artist_id,
+      title: row.title,
+      durationMs: row.duration_ms,
+      trackNumber: row.track_number,
+      explicit: row.explicit,
+      isrc: row.isrc,
+      hlsManifestUrl: row.hls_manifest_url,
+      previewUrl: row.preview_url,
+      waveformData: row.waveform_data,
+      playCount: row.play_count,
+      likeCount: row.like_count,
+      status: row.status,
+      genres: row.genres,
+      liked: row.liked,
+      position: row.position,
+      artist: {
+        id: row.artist_id,
+        name: row.artist_name,
+        avatarUrl: row.artist_avatar,
+        verified: row.artist_verified,
+      },
+      album: {
+        id: row.album_id,
+        title: row.album_title,
+        coverUrl: row.album_cover,
+        releaseDate: row.release_date,
+      },
+    }));
   }
 
   // ── History ───────────────────────────────────────────────────────────────

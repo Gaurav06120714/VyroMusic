@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Home, Search, Library, User, Radio, Plus, Crown, ChevronDown } from 'lucide-react';
+import { Home, Search, Library, User, Radio, Plus, Crown, ChevronDown, Star } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import { usePlayerStore } from '@/store/player.store';
 import { api } from '@/lib/api';
@@ -153,6 +153,24 @@ export function Sidebar() {
             )}
           </>
         )}
+
+        {/* Vyro Special */}
+        <div className="px-3 pt-5 pb-1.5">
+          <p className="text-[11px] text-white/25 uppercase tracking-widest font-semibold">Vyro Special</p>
+        </div>
+        <Link
+          href="/playlist/77a5ad89-4c99-427d-bf89-7efdec456b76"
+          className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all hover:translate-x-0.5 ${
+            pathname === '/playlist/77a5ad89-4c99-427d-bf89-7efdec456b76'
+              ? 'text-vyro-300 bg-vyro-500/10'
+              : 'text-white/45 hover:text-white hover:bg-white/[0.04]'
+          }`}
+        >
+          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-vyro-500 to-cyan-500 flex items-center justify-center shrink-0">
+            <Star className="w-3.5 h-3.5 text-white fill-white" />
+          </div>
+          <span className="truncate font-medium">51 Special Songs</span>
+        </Link>
 
         {/* Followed artists */}
         {followedArtists.length > 0 && (

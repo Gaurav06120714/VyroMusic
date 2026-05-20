@@ -44,6 +44,13 @@ export async function libraryRoutes(app: FastifyInstance) {
     return library.createPlaylist(userId, title, description, isPublic);
   });
 
+  // Public featured playlists — no auth required
+  app.get('/playlists/featured', async (req, reply) => {
+    const { limit = '10' } = req.query as Record<string, string>;
+    const playlists = await library.getFeaturedPlaylists(parseInt(limit));
+    return playlists;
+  });
+
   app.get('/playlists/:id', { preHandler: [async (req, reply) => { try { await req.jwtVerify(); } catch { /* optional */ } }] }, async (req, reply) => {
     const { id } = req.params as { id: string };
     const userId = (req.user as { sub: string } | undefined)?.sub;

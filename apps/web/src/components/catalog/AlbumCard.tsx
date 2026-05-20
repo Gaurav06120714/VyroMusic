@@ -23,9 +23,9 @@ export function AlbumCard({ album }: Props) {
         </div>
       </div>
       <div>
-        <p className="text-sm font-semibold text-white truncate">{album.title}</p>
+        <p className="text-sm font-semibold text-white truncate">{album.title || 'Unknown Album'}</p>
         <p className="text-xs text-white/40 truncate mt-0.5">
-          {album.artist?.name} • {new Date(album.releaseDate).getFullYear()}
+          {album.artist?.name || 'Unknown Artist'}{album.releaseDate ? ` • ${new Date(album.releaseDate).getFullYear()}` : ''}
         </p>
       </div>
     </Link>

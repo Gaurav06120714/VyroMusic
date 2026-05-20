@@ -61,11 +61,17 @@
 @layer components {
   /* Glassmorphism card */
   .glass-card {
-    background: rgba(255,255,255,0.04);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border: 1px solid rgba(255,255,255,0.09);
     border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  .glass-card:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.12);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
   }
 
   .glass-panel {
@@ -107,7 +113,7 @@
     transition: height 0.15s ease;
   }
   .progress-bar:hover {
-    height: 6px;
+    height: 5px;
   }
   .progress-fill {
     @apply absolute top-0 left-0 h-full rounded-full;
@@ -115,13 +121,54 @@
   }
   .progress-bar:hover .progress-thumb {
     opacity: 1;
+    width: 12px;
+    height: 12px;
   }
   .progress-thumb {
-    @apply absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow-lg;
+    @apply absolute top-1/2 -translate-y-1/2 rounded-full bg-white shadow-lg;
+    width: 0;
+    height: 0;
     opacity: 0;
-    transition: opacity 0.15s;
+    transition: opacity 0.15s, width 0.15s, height 0.15s;
     margin-left: -6px;
     pointer-events: none;
+    box-shadow: 0 0 8px rgba(139,92,246,0.6), 0 2px 4px rgba(0,0,0,0.4);
+  }
+
+  /* Volume slider */
+  .volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(to right, #8b5cf6 var(--vol, 80%), rgba(255,255,255,0.1) var(--vol, 80%));
+    outline: none;
+    transition: height 0.15s;
+  }
+  .volume-slider:hover {
+    height: 5px;
+  }
+  .volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    transition: width 0.15s, height 0.15s, box-shadow 0.15s;
+    box-shadow: 0 0 6px rgba(139,92,246,0.5);
+  }
+  .volume-slider:hover::-webkit-slider-thumb {
+    width: 12px;
+    height: 12px;
+  }
+  .volume-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
   }
 
   /* Equalizer bars animation */
@@ -174,6 +221,20 @@
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Animate classes */
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out both;
+  }
+  .animate-slideUp {
+    animation: slideUp 0.4s ease-out both;
+  }
+  .animate-scaleIn {
+    animation: scaleIn 0.2s ease-out both;
+  }
+  .animate-pulse-glow {
+    animation: pulse-glow 2.5s ease-in-out infinite;
   }
 }
 

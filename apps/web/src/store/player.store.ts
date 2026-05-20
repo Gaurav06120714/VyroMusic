@@ -9,6 +9,7 @@ interface PlayerState {
   currentTrack: Track | null;
   isPlaying: boolean;
   currentMs: number;
+  durationMs: number;
   volume: number;
   muted: boolean;
   queue: Track[];
@@ -31,6 +32,7 @@ interface PlayerState {
   next: () => void;
   prev: () => void;
   seek: (ms: number) => void;
+  setDurationMs: (ms: number) => void;
   setVolume: (v: number) => void;
   toggleMute: () => void;
   toggleShuffle: () => void;
@@ -48,6 +50,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   currentTrack: null,
   isPlaying: false,
   currentMs: 0,
+  durationMs: 0,
   volume: 0.8,
   muted: false,
   queue: [],
@@ -62,7 +65,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   showFullscreen: false,
 
   playTrack: (track) => {
-    set({ currentTrack: track, isPlaying: true, currentMs: 0 });
+    set({ currentTrack: track, isPlaying: true, currentMs: 0, durationMs: track.durationMs || 0 });
     const idx = get().queue.findIndex(t => t.id === track.id);
     if (idx !== -1) set({ queueIndex: idx });
   },
@@ -74,6 +77,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       currentTrack: tracks[startIndex] || null,
       isPlaying: tracks.length > 0,
       currentMs: 0,
+      durationMs: tracks[startIndex]?.durationMs || 0,
       playMode: 'normal',
     });
   },
@@ -108,18 +112,19 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
         else return;
       }
     }
-    set({ queueIndex: nextIdx, currentTrack: queue[nextIdx], isPlaying: true, currentMs: 0 });
+    set({ queueIndex: nextIdx, currentTrack: queue[nextIdx], isPlaying: true, currentMs: 0, durationMs: queue[nextIdx]?.durationMs || 0 });
   },
 
   prev: () => {
     const { queue, queueIndex, currentMs } = get();
     if (currentMs > 3000) { set({ currentMs: 0 }); return; }
     const prevIdx = Math.max(0, queueIndex - 1);
-    set({ queueIndex: prevIdx, currentTrack: queue[prevIdx] || null, isPlaying: true, currentMs: 0 });
+    set({ queueIndex: prevIdx, currentTrack: queue[prevIdx] || null, isPlaying: true, currentMs: 0, durationMs: queue[prevIdx]?.durationMs || 0 });
   },
 
   seek: (ms) => set({ currentMs: ms }),
   setCurrentMs: (ms) => set({ currentMs: ms }),
+  setDurationMs: (ms) => set({ durationMs: ms }),
   setVolume: (v) => set({ volume: Math.max(0, Math.min(1, v)), muted: false }),
   toggleMute: () => set(s => ({ muted: !s.muted })),
   toggleShuffle: () => set(s => ({ shuffle: !s.shuffle })),

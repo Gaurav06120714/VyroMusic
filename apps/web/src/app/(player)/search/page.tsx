@@ -39,6 +39,7 @@ function toPlayerTrack(t: ItunesTrack): Track {
 }
 
 function msToTime(ms: number) {
+  if (!ms || isNaN(ms)) return '0:00';
   const s = Math.floor(ms / 1000);
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
@@ -68,6 +69,37 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'newest',   label: 'Newest' },
   { value: 'az',       label: 'A-Z' },
 ];
+
+const KEYWORD_MAP: Record<string, string> = {
+  'srh': 'Sunrisers Hyderabad Orange Army',
+  'orange army': 'Orange Army Sunrisers Hyderabad',
+  'ipl': 'IPL cricket song',
+  'arijit': 'Arijit Singh',
+  'ap dhillon': 'AP Dhillon',
+  'sidhu': 'Sidhu Moosewala',
+  'moosewala': 'Sidhu Moosewala',
+  'atif': 'Atif Aslam',
+  'kishore': 'Kishore Kumar',
+  'rafi': 'Mohammed Rafi',
+  'lata': 'Lata Mangeshkar',
+  'weeknd': 'The Weeknd',
+  'taylorswift': 'Taylor Swift',
+  'taylor': 'Taylor Swift',
+  'drakee': 'Drake',
+  'kpop': 'K-Pop',
+  'bollywood': 'Bollywood Hindi songs',
+  'punjabi': 'Punjabi songs latest',
+  'lofi': 'Lo-fi chill beats',
+  'hip hop': 'hip hop rap',
+  'workout': 'workout gym motivation songs',
+  'sad': 'sad emotional songs',
+  'romantic': 'romantic love songs',
+};
+
+function expandKeyword(q: string): string {
+  const lower = q.trim().toLowerCase();
+  return KEYWORD_MAP[lower] ?? q;
+}
 
 const RECENT_KEY = 'vyro_recent_searches';
 
@@ -128,10 +160,11 @@ export default function SearchPage() {
       saveRecent(q.trim());
       setRecentSearches(loadRecent());
     }
+    const expanded = expandKeyword(q);
     try {
       const [localData, itunesData] = await Promise.allSettled([
-        api<Results>(`/api/search?q=${encodeURIComponent(q)}`),
-        api<ItunesTrack[]>(`/api/itunes/search?q=${encodeURIComponent(q)}&limit=30`),
+        api<Results>(`/api/search?q=${encodeURIComponent(expanded)}`),
+        api<ItunesTrack[]>(`/api/itunes/search?q=${encodeURIComponent(expanded)}&limit=30`),
       ]);
       setResults(localData.status === 'fulfilled' ? localData.value : null);
       setItunesTracks(itunesData.status === 'fulfilled' ? itunesData.value : []);
@@ -320,25 +353,33 @@ export default function SearchPage() {
                   <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-3">Top Result</h2>
                   <button
                     onClick={() => { setQueue(sortedTracks); playTrack(topTrack); }}
-                    className="w-full text-left p-5 rounded-2xl glass-card hover:bg-white/[0.08] transition-all group"
+                    className="w-full text-left p-5 rounded-2xl glass-card hover:bg-white/[0.08] transition-all group relative overflow-hidden"
                   >
-                    <div className="relative w-20 h-20 rounded-xl overflow-hidden mb-4 shadow-xl">
-                      {topTrack.album?.coverUrl ? (
-                        <Image src={topTrack.album.coverUrl} alt={topTrack.title} fill className="object-cover" unoptimized sizes="80px" />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-vyro-700 to-cyan-700" />
-                      )}
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
-                        <div className="w-8 h-8 rounded-full btn-neon flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <svg className="w-3.5 h-3.5 text-white ml-0.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                          </svg>
+                    {/* Background blur from cover art */}
+                    {topTrack.album?.coverUrl && (
+                      <div className="absolute inset-0 opacity-15 scale-110">
+                        <Image src={topTrack.album.coverUrl} alt="" fill className="object-cover blur-2xl" unoptimized sizes="300px" />
+                      </div>
+                    )}
+                    <div className="relative">
+                      <div className="relative w-28 h-28 rounded-xl overflow-hidden mb-4 shadow-2xl">
+                        {topTrack.album?.coverUrl ? (
+                          <Image src={topTrack.album.coverUrl} alt={topTrack.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized sizes="112px" />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-vyro-700 to-cyan-700" />
+                        )}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                            <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                            </svg>
+                          </div>
                         </div>
                       </div>
+                      <p className="text-xl font-bold text-white mb-1 leading-tight">{topTrack.title}</p>
+                      <p className="text-sm text-white/50">{topTrack.artist?.name || 'Unknown Artist'}</p>
+                      <span className="mt-3 inline-block text-[11px] font-semibold bg-white/10 text-white/50 px-2.5 py-1 rounded-full">Song</span>
                     </div>
-                    <p className="text-xl font-bold text-white mb-1">{topTrack.title}</p>
-                    <p className="text-sm text-white/50">{topTrack.artist?.name}</p>
-                    <span className="mt-3 inline-block text-[11px] font-semibold bg-white/10 text-white/50 px-2.5 py-1 rounded-full">Song</span>
                   </button>
                 </div>
               )}
@@ -497,7 +538,7 @@ export default function SearchPage() {
                 <button
                   key={name}
                   onClick={() => handleSearchClick(name)}
-                  className={`relative h-20 rounded-2xl overflow-hidden bg-gradient-to-br ${gradient} hover:scale-[1.03] active:scale-[0.97] transition-transform duration-200 shadow-lg group min-h-[44px]`}
+                  className={`relative h-28 rounded-2xl overflow-hidden bg-gradient-to-br ${gradient} hover:scale-[1.03] active:scale-[0.97] transition-transform duration-200 shadow-lg group min-h-[44px]`}
                 >
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
                   <span className="relative z-10 text-white font-bold text-base px-4 py-3 flex items-end h-full">
@@ -512,12 +553,23 @@ export default function SearchPage() {
 
       {/* No results */}
       {query && !loading && !hasAnyResults && (
-        <div className="text-center py-20">
-          <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-            <Search className="w-7 h-7 text-white/20" />
+        <div className="text-center py-24">
+          <div className="w-20 h-20 rounded-full bg-white/[0.04] border border-white/[0.07] flex items-center justify-center mx-auto mb-5 shadow-inner">
+            <Search className="w-8 h-8 text-white/15" />
           </div>
-          <p className="text-white/50 font-medium">No results for &ldquo;{query}&rdquo;</p>
-          <p className="text-white/25 text-sm mt-1">Try a different search term</p>
+          <p className="text-white/60 font-semibold text-lg">No results for &ldquo;{query}&rdquo;</p>
+          <p className="text-white/25 text-sm mt-2 max-w-xs mx-auto">Try checking your spelling, or searching for something else</p>
+          <div className="flex flex-wrap gap-2 justify-center mt-6">
+            {TRENDING_SEARCHES.slice(0, 4).map(s => (
+              <button
+                key={s}
+                onClick={() => handleSearchClick(s)}
+                className="px-3 py-1.5 rounded-full text-xs font-medium bg-vyro-500/10 border border-vyro-500/20 text-vyro-300/70 hover:text-vyro-300 hover:bg-vyro-500/15 transition-all"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

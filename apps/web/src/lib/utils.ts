@@ -1,4 +1,5 @@
 export function formatMs(ms: number): string {
+  if (!ms || isNaN(ms)) return '0:00';
   const totalSeconds = Math.floor(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
@@ -6,6 +7,7 @@ export function formatMs(ms: number): string {
 }
 
 export function formatNumber(n: number): string {
+  if (n == null || isNaN(Number(n))) return '0';
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
   return n.toString();

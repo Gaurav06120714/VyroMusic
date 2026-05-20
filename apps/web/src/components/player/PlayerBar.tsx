@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { Heart, Radio, Mic2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { usePlayerStore } from '@/store/player.store';
 import { useAuthStore } from '@/store/auth.store';
@@ -22,7 +22,7 @@ function EqualizerBars() {
 
 export function PlayerBar() {
   const {
-    currentTrack, isPlaying, volume, muted, currentMs,
+    currentTrack, isPlaying, volume, muted, currentMs, durationMs: storeDurationMs,
     shuffle, repeat, showQueue, showLyrics, playMode,
     togglePlay, next, prev, seek, setVolume, toggleMute,
     toggleShuffle, cycleRepeat, toggleQueue, toggleLyrics,
@@ -30,6 +30,8 @@ export function PlayerBar() {
   } = usePlayerStore();
   const user = useAuthStore(s => s.user);
   const [liked, setLiked] = useState(false);
+  const isDraggingRef = useRef(false);
+  const progressBarRef = useRef<HTMLDivElement>(null);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -55,22 +57,43 @@ export function PlayerBar() {
     </div>
   );
 
-  const durationMs = currentTrack.durationMs || 0;
+  // Use store durationMs (populated from actual audio element) — falls back to track object if audio hasn't loaded yet
+  const durationMs = storeDurationMs || currentTrack.durationMs || 0;
   const progress = durationMs > 0 ? Math.min(currentMs / durationMs, 1) : 0;
   const elapsed = formatMs(currentMs);
   const total = formatMs(durationMs);
 
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const seekFromEvent = (clientX: number) => {
+    const bar = progressBarRef.current;
+    if (!bar) return;
+    const rect = bar.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     const ms = pct * durationMs;
     seek(ms);
     seekAudio(ms);
   };
 
+  const handleSeekMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    isDraggingRef.current = true;
+    seekFromEvent(e.clientX);
+    const onMove = (ev: MouseEvent) => { if (isDraggingRef.current) seekFromEvent(ev.clientX); };
+    const onUp = () => { isDraggingRef.current = false; window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  };
+
+  const handleSeekTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    isDraggingRef.current = true;
+    seekFromEvent(e.touches[0].clientX);
+    const onMove = (ev: TouchEvent) => { if (isDraggingRef.current) seekFromEvent(ev.touches[0].clientX); };
+    const onEnd = () => { isDraggingRef.current = false; window.removeEventListener('touchmove', onMove); window.removeEventListener('touchend', onEnd); };
+    window.addEventListener('touchmove', onMove);
+    window.addEventListener('touchend', onEnd);
+  };
+
   return (
     <div
-      className="h-[72px] md:h-20 border-t border-white/[0.04] flex items-center px-3 md:px-5 gap-3 md:gap-4 shrink-0 z-40"
+      className="h-20 border-t border-white/[0.04] flex items-center px-3 md:px-5 gap-3 md:gap-4 shrink-0 z-40"
       style={{ background: 'rgba(5,5,8,0.85)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)' }}
     >
       {/* Track info — left */}
@@ -148,15 +171,22 @@ export function PlayerBar() {
           {/* Play/Pause */}
           <button
             onClick={togglePlay}
-            className="w-10 h-10 md:w-11 md:h-11 rounded-full btn-neon flex items-center justify-center text-white shadow-lg shadow-vyro-500/30 transition-transform active:scale-95 hover:scale-105"
+            className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-white transition-all active:scale-95 hover:scale-105 shrink-0"
+            style={{
+              background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+              boxShadow: isPlaying
+                ? '0 0 24px rgba(139,92,246,0.7), 0 4px 16px rgba(0,0,0,0.4)'
+                : '0 0 16px rgba(139,92,246,0.4), 0 4px 12px rgba(0,0,0,0.4)',
+            }}
           >
             {isPlaying ? (
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+              <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16" rx="1.5" />
+                <rect x="14" y="4" width="4" height="16" rx="1.5" />
               </svg>
             ) : (
-              <svg className="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+              <svg className="w-5 h-5 md:w-6 md:h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5.14v14l11-7-11-7z" />
               </svg>
             )}
           </button>
@@ -187,8 +217,10 @@ export function PlayerBar() {
         <div className="flex items-center gap-2.5 w-full max-w-lg md:max-w-xl">
           <span className="text-[10px] text-white/25 w-8 text-right font-mono tabular-nums hidden md:block">{elapsed}</span>
           <div
+            ref={progressBarRef}
             className="progress-bar flex-1 cursor-pointer group/bar"
-            onClick={handleSeek}
+            onMouseDown={handleSeekMouseDown}
+            onTouchStart={handleSeekTouchStart}
           >
             <div className="progress-fill transition-none" style={{ width: `${progress * 100}%` }} />
             <div className="progress-thumb" style={{ left: `${progress * 100}%` }} />
@@ -248,7 +280,8 @@ export function PlayerBar() {
             type="range" min="0" max="1" step="0.01"
             value={muted ? 0 : volume}
             onChange={e => setVolume(parseFloat(e.target.value))}
-            className="w-20 h-1 appearance-none bg-white/10 rounded-full cursor-pointer accent-vyro-500 hover:h-1.5 transition-all"
+            className="volume-slider w-20 cursor-pointer"
+            style={{ '--vol': `${(muted ? 0 : volume) * 100}%` } as React.CSSProperties}
           />
         </div>
       </div>

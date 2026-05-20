@@ -11,15 +11,15 @@ export function ArtistCard({ artist }: Props) {
     <Link href={`/artist/${artist.id}`} className="group flex flex-col gap-3 p-3 rounded-2xl glass-card hover:bg-white/[0.07] hover:scale-[1.02] hover:shadow-xl hover:shadow-black/40 transition-all duration-200 cursor-pointer">
       <div className="relative aspect-square rounded-full overflow-hidden bg-white/5">
         {artist.avatarUrl ? (
-          <Image src={artist.avatarUrl} alt={artist.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+          <Image src={artist.avatarUrl} alt={artist.name || 'Artist'} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-4xl bg-gradient-to-br from-vyro-600 to-cyan-500">
-            <span className="text-white font-bold text-2xl">{artist.name[0]}</span>
+            <span className="text-white font-bold text-2xl">{(artist.name || '?')[0]}</span>
           </div>
         )}
       </div>
       <div className="text-center">
-        <p className="text-sm font-semibold text-white truncate">{artist.name}</p>
+        <p className="text-sm font-semibold text-white truncate">{artist.name || 'Unknown Artist'}</p>
         <p className="text-xs text-white/40 mt-0.5">{formatNumber(artist.monthlyListeners)} monthly listeners</p>
         {artist.verified && (
           <span className="inline-flex items-center gap-1 text-[10px] text-cyan-400 mt-1">
