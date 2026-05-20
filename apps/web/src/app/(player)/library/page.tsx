@@ -39,37 +39,42 @@ export default function LibraryPage() {
   };
 
   return (
-    <div className="p-6 pb-8">
-      {/* Header */}
-      <div className="flex items-end gap-6 mb-8">
-        <div className="w-36 h-36 rounded-2xl bg-gradient-to-br from-vyro-600 to-cyan-600 flex items-center justify-center shadow-2xl shrink-0">
-          <Heart className="w-14 h-14 text-white fill-white" />
-        </div>
-        <div>
-          <p className="text-xs text-white/40 uppercase tracking-widest mb-1">Playlist</p>
-          <h1 className="text-4xl font-bold text-white mb-2">Liked Songs</h1>
-          <p className="text-white/40 text-sm">{tracks.length} songs</p>
-          <div className="flex items-center gap-3 mt-4">
-            <button
-              onClick={() => playAll(false)}
-              className="btn-neon flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold"
-              disabled={!tracks.length}
-            >
-              <Play className="w-4 h-4 fill-current" /> Play
-            </button>
-            <button
-              onClick={() => playAll(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-white/20 text-white/60 hover:text-white text-sm transition-all"
-              disabled={!tracks.length}
-            >
-              <Shuffle className="w-4 h-4" /> Shuffle
-            </button>
+    <div className="pb-8 animate-fadeIn">
+      {/* Blurred hero gradient header */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-vyro-900/30 via-[#050508]/70 to-[#050508]" />
+        <div className="relative flex flex-col sm:flex-row items-start sm:items-end gap-5 md:gap-6 p-6 md:p-8 pt-10">
+          <div className="w-36 h-36 md:w-44 md:h-44 rounded-2xl bg-gradient-to-br from-vyro-600 to-cyan-600 flex items-center justify-center shadow-2xl shadow-vyro-900/60 shrink-0 ring-1 ring-white/10">
+            <Heart className="w-14 h-14 text-white fill-white" />
+          </div>
+          <div>
+            <p className="text-xs text-white/40 uppercase tracking-widest mb-1.5 font-semibold">Playlist</p>
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-2 leading-none">Liked Songs</h1>
+            <p className="text-white/40 text-sm">{tracks.length} {tracks.length === 1 ? 'song' : 'songs'}</p>
+            <div className="flex items-center gap-3 mt-5">
+              <button
+                onClick={() => playAll(false)}
+                className="btn-neon flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold active:scale-95 transition-transform"
+                disabled={!tracks.length}
+              >
+                <Play className="w-4 h-4 fill-current" /> Play
+              </button>
+              <button
+                onClick={() => playAll(true)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/15 text-white/55 hover:text-white hover:border-white/35 transition-all text-sm font-medium"
+                disabled={!tracks.length}
+              >
+                <Shuffle className="w-4 h-4" /> Shuffle
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
+      <div className="px-4 md:px-6 mt-2">
+
       {loading ? (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="h-14 rounded-xl bg-white/[0.04] animate-pulse" />
           ))}
@@ -80,7 +85,7 @@ export default function LibraryPage() {
           <p>Songs you like will appear here.</p>
         </div>
       ) : (
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {tracks.map((track, i) => (
             <TrackRow
               key={track.id}
@@ -93,6 +98,7 @@ export default function LibraryPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

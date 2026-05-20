@@ -8,7 +8,7 @@ interface Props { artist: Artist; }
 
 export function ArtistCard({ artist }: Props) {
   return (
-    <Link href={`/artist/${artist.id}`} className="group flex flex-col gap-3 p-3 rounded-2xl glass-card hover:bg-white/[0.07] transition-all duration-200 cursor-pointer">
+    <Link href={`/artist/${artist.id}`} className="group flex flex-col gap-3 p-3 rounded-2xl glass-card hover:bg-white/[0.07] hover:scale-[1.02] hover:shadow-xl hover:shadow-black/40 transition-all duration-200 cursor-pointer">
       <div className="relative aspect-square rounded-full overflow-hidden bg-white/5">
         {artist.avatarUrl ? (
           <Image src={artist.avatarUrl} alt={artist.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />

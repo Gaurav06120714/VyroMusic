@@ -7,7 +7,7 @@ interface Props { album: Album; }
 
 export function AlbumCard({ album }: Props) {
   return (
-    <Link href={`/album/${album.id}`} className="group flex flex-col gap-3 p-3 rounded-2xl glass-card hover:bg-white/[0.07] transition-all duration-200 cursor-pointer">
+    <Link href={`/album/${album.id}`} className="group flex flex-col gap-3 p-3 rounded-2xl glass-card hover:bg-white/[0.07] hover:scale-[1.02] hover:shadow-xl hover:shadow-black/40 transition-all duration-200 cursor-pointer">
       <div className="relative aspect-square rounded-xl overflow-hidden bg-white/5">
         {album.coverUrl ? (
           <Image src={album.coverUrl} alt={album.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />

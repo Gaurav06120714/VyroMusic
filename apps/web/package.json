@@ -7,6 +7,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^6.4.0",
+    "@stripe/stripe-js": "^9.6.0",
     "@vyro/types": "*",
     "framer-motion": "^11.3.0",
     "hls.js": "^1.5.13",
@@ -14,6 +16,7 @@
     "next": "15.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.6.0",
     "zustand": "^5.0.0"
   },
   "devDependencies": {

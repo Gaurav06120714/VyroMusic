@@ -186,10 +186,30 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 );
 `;
 
+const STRIPE_MIGRATION = `
+-- Stripe billing columns
+ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_customer_id VARCHAR(255);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_subscription_id VARCHAR(255);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status VARCHAR(50) DEFAULT 'inactive';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_period_end TIMESTAMPTZ;
+
+-- Subscription events log
+CREATE TABLE IF NOT EXISTS subscription_events (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id          UUID REFERENCES users(id) ON DELETE CASCADE,
+  stripe_event_id  VARCHAR(255) UNIQUE,
+  event_type       VARCHAR(100),
+  data             JSONB,
+  created_at       TIMESTAMPTZ DEFAULT NOW()
+);
+`;
+
 async function migrate() {
   const db = getDb();
   console.log('Running migrations...');
   await db.query(SCHEMA);
+  console.log('Running Stripe billing migration...');
+  await db.query(STRIPE_MIGRATION);
   console.log('✅ Migrations complete');
   process.exit(0);
 }

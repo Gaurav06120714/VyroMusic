@@ -56,6 +56,7 @@ export interface Track {
   isrc: string | null;
   hlsManifestUrl: string | null;
   previewUrl: string | null;
+  source?: 'local' | 'itunes';
   waveformData: number[] | null;
   playCount: number;
   likeCount: number;
@@ -90,6 +91,12 @@ export interface Lyrics {
   lines: LyricLine[];
   synced: boolean;
   language: string | null;
+}
+
+/** Parsed single line used internally by LyricsPanel (ms alias for convenience). */
+export interface ParsedLyricLine {
+  ms: number;
+  text: string;
 }
 
 // ─── Search ──────────────────────────────────────────────────────────────────

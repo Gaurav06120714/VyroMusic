@@ -35,13 +35,18 @@
 - 🎙️ **Radio Engine** — zero-UI component silently appending tracks before queue runs out
 - 💾 **Recommendation Cache** — 1-hour server-side cache per user per context
 
-### Phase 3 — Scale + Mobile (🔄 Planned)
-- Elasticsearch for semantic search
-- Stripe subscription billing (free/premium/family)
-- Synced lyrics (LRC format)
-- React Native mobile app
-- ClickHouse analytics pipeline
-- S3 + CloudFront HLS audio delivery
+### Phase 3 — Scale + Monetisation (✅ Complete)
+- 💳 **Stripe Billing** — free/premium/family/student subscriptions, Checkout + Customer Portal, webhook handler
+- 🎤 **Synced Lyrics** — LRC karaoke-style panel, auto-scroll + real-time line highlight
+- 🍎 **iTunes Live Catalog** — 90M+ songs via Apple Music API, zero signup, always up to date
+- 🔍 **Advanced Search** — unified iTunes + local DB search, genre/year/sort filters, filter drawer, recent + trending searches
+- 📱 **Full Mobile Optimization** — bottom nav, floating mini player, full-screen now-playing, 44px touch targets
+- 🎨 **Premium UI/UX** — shimmer skeletons, toast notifications, glassmorphism polish, micro-interactions
+- ♿ **Accessibility** — focus-visible states, reduced-motion support, semantic HTML, aria labels
+- 🔎 **Elasticsearch** — semantic search, genre filters, year range (🔄 Planned)
+- 📊 **ClickHouse** — analytics pipeline (play events at scale) (🔄 Planned)
+- ☁️ **S3 + CloudFront** — real HLS audio delivery pipeline (🔄 Planned)
+- 📱 **React Native** — iOS + Android app sharing the same API (🔄 Planned)
 
 ---
 
@@ -240,6 +245,15 @@ All endpoints are proxied through Next.js at `/api/*` → `localhost:3001/*`.
 | `GET` | `/search?q=` | — | Full search (tracks + albums + artists) |
 | `GET` | `/search/autocomplete?q=` | — | Quick suggestions |
 
+### Billing (Phase 3)
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| `GET` | `/billing/plans` | — | List all subscription plans |
+| `POST` | `/billing/create-checkout-session` | Bearer | Create Stripe Checkout session |
+| `POST` | `/billing/create-portal-session` | Bearer | Open Stripe Customer Portal |
+| `POST` | `/billing/webhook` | Stripe sig | Handle Stripe webhook events |
+| `GET` | `/tracks/:id/lyrics` | — | Synced lyrics for a track |
+
 ---
 
 ## 🗄️ Database Schema
@@ -287,6 +301,8 @@ All Phase 1 + Phase 2 endpoints tested and passing:
 ✅ Recommendations — for-you, discover, radio, trending, cache refresh
 ✅ Social — follow/unfollow artist, check status, list followed, profile, stats
 ✅ Library — like/unlike, liked list, playlist CRUD, add/remove tracks, history
+✅ Billing — plans list, checkout session, customer portal, webhook handler
+✅ Lyrics — synced LRC endpoint, karaoke panel with real-time highlight
 ✅ Frontend — 0 TypeScript errors, all pages HTTP 200
 ```
 
@@ -295,8 +311,9 @@ All Phase 1 + Phase 2 endpoints tested and passing:
 ## 🗺️ Roadmap
 
 ### Phase 3 — Scale + Monetisation
-- [ ] **Stripe billing** — free/premium/family/student subscriptions
-- [ ] **Synced lyrics** — LRC format, karaoke-style highlight
+- [x] **Stripe billing** — free/premium/family/student subscriptions, Checkout + Customer Portal
+- [x] **Synced lyrics** — LRC format, karaoke-style line highlight with auto-scroll
+- [ ] **Advanced search** — genre filters, year range, sort order
 - [ ] **S3 + CloudFront** — real HLS audio delivery pipeline
 - [ ] **Elasticsearch** — semantic search, genre filters, year range
 - [ ] **ClickHouse** — analytics pipeline (play events at scale)

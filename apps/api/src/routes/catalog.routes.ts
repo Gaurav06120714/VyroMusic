@@ -20,29 +20,53 @@ export async function catalogRoutes(app: FastifyInstance) {
     return track;
   });
 
-  // Stream token — returns signed CloudFront URL (or preview URL)
-  app.get('/tracks/:id/stream', { preHandler: [requireAuth] }, async (req, reply) => {
+  // Lyrics — no auth required
+  app.get('/tracks/:id/lyrics', async (req, reply) => {
     const { id } = req.params as { id: string };
-    const userId = (req.user as { sub: string }).sub;
+    const db = getDb();
+    const result = await db.query<{
+      content: Array<{ timeMs: number; text: string }>;
+      plain_text: string | null;
+      language: string | null;
+      synced: boolean;
+    }>(
+      `SELECT content, plain_text, language, synced FROM lyrics WHERE track_id = $1`,
+      [id]
+    );
+    if (!result.rows[0]) return reply.status(404).send({ error: 'Lyrics not found' });
+    const row = result.rows[0];
+    return {
+      trackId: id,
+      lines: row.content,
+      synced: row.synced,
+      language: row.language,
+    };
+  });
+
+  // Stream token — returns signed CloudFront URL (or preview URL)
+  app.get('/tracks/:id/stream', { preHandler: [optionalAuth] }, async (req, reply) => {
+    const { id } = req.params as { id: string };
+    const userId = (req.user as { sub: string } | undefined)?.sub;
     const track = await catalog.getTrack(id, userId);
     if (!track) return reply.status(404).send({ error: 'Track not found' });
 
-    // In production: generate signed CloudFront URL
-    // For MVP/dev: return the direct HLS URL (or preview for free tier)
+    // Resolve the best playable URL: prefer HLS manifest for premium users,
+    // fall back to preview_url (plain MP3) for free tier or when no HLS exists.
     const db = getDb();
-    const userResult = await db.query('SELECT subscription_tier FROM users WHERE id=$1', [userId]);
-    const isPremium = userResult.rows[0]?.subscription_tier !== 'free';
+    const isPremium = userId
+      ? (await db.query('SELECT subscription_tier FROM users WHERE id=$1', [userId])).rows[0]?.subscription_tier !== 'free'
+      : false;
 
-    if (!isPremium && track.hlsManifestUrl) {
-      return {
-        manifestUrl: track.previewUrl || track.hlsManifestUrl,
-        expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-        previewOnly: true,
-      };
-    }
+    const streamUrl = isPremium
+      ? (track.hlsManifestUrl || track.previewUrl)
+      : track.previewUrl;
+
+    if (!streamUrl) return reply.status(404).send({ error: 'No stream available' });
 
     return {
-      manifestUrl: track.hlsManifestUrl || track.previewUrl,
+      url: streamUrl,
+      manifestUrl: streamUrl, // kept for AudioEngine backward-compat
+      token: 'preview',
       expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
       previewOnly: !isPremium,
     };

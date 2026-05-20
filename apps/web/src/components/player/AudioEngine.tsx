@@ -28,11 +28,19 @@ export function AudioEngine() {
       // Destroy previous HLS instance first
       if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
 
+      // iTunes tracks: play previewUrl directly, skip stream API call
+      if (currentTrack.id.startsWith('itunes_') && currentTrack.previewUrl) {
+        audio.src = currentTrack.previewUrl;
+        audio.load();
+        if (isPlaying) audio.play().catch(() => {});
+        return;
+      }
+
       try {
-        const token = await api<{ manifestUrl: string; previewOnly: boolean }>(
+        const token = await api<{ url: string; manifestUrl?: string; previewOnly: boolean }>(
           `/api/tracks/${currentTrack.id}/stream`
         );
-        const url = token?.manifestUrl;
+        const url = token?.url || token?.manifestUrl;
         if (!url) throw new Error('No stream URL');
 
         if (url.includes('.m3u8') && Hls.isSupported()) {

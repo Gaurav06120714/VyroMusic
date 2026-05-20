@@ -57,6 +57,32 @@ const artists = [
   },
 ];
 
+// Cycling through 17 SoundHelix public-domain MP3s
+const PREVIEW_URLS = [
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3',
+];
+
+let previewUrlIndex = 0;
+function nextPreviewUrl(): string {
+  return PREVIEW_URLS[previewUrlIndex++ % PREVIEW_URLS.length];
+}
+
 const albumsData = [
   {
     artist: 'The Weeknd',
@@ -161,13 +187,148 @@ async function seed() {
     for (let i = 0; i < albumData.tracks.length; i++) {
       const t = albumData.tracks[i];
       await db.query(
-        `INSERT INTO tracks (id, album_id, artist_id, title, duration_ms, track_number, status, play_count)
-         VALUES ($1,$2,$3,$4,$5,$6,'active',$7) ON CONFLICT DO NOTHING`,
-        [uuid(), albumId, artistId, t.title, t.duration_ms, i + 1, Math.floor(Math.random() * 10_000_000 + 500_000)]
+        `INSERT INTO tracks (id, album_id, artist_id, title, duration_ms, track_number, status, play_count, preview_url)
+         VALUES ($1,$2,$3,$4,$5,$6,'active',$7,$8) ON CONFLICT DO NOTHING`,
+        [uuid(), albumId, artistId, t.title, t.duration_ms, i + 1, Math.floor(Math.random() * 10_000_000 + 500_000), nextPreviewUrl()]
       );
     }
   }
   console.log('✅ Albums & tracks seeded');
+
+  // ── Lyrics (LRC-style synced lyrics for select tracks) ───────────────────
+  // Fetch track IDs by title so we can attach lyrics
+  const lyricsData: Array<{
+    title: string;
+    language: string;
+    lines: Array<{ timeMs: number; text: string }>;
+  }> = [
+    {
+      title: 'Blinding Lights',
+      language: 'en',
+      lines: [
+        { timeMs: 3200,  text: "I've been tryna call" },
+        { timeMs: 7800,  text: "I've been on my own for long enough" },
+        { timeMs: 12400, text: "Maybe you can show me how to love, maybe" },
+        { timeMs: 17000, text: "I'm going through withdrawals" },
+        { timeMs: 21600, text: "You don't even have to do too much" },
+        { timeMs: 26200, text: "You can turn me on with just a touch, baby" },
+        { timeMs: 31000, text: "I look around and" },
+        { timeMs: 33800, text: "Sin City's cold and empty" },
+        { timeMs: 38400, text: "No one's around to judge me" },
+        { timeMs: 43000, text: "I can't see clearly when you're gone" },
+        { timeMs: 49000, text: "I said, ooh, I'm blinded by the lights" },
+        { timeMs: 54600, text: "No, I can't sleep until I feel your touch" },
+        { timeMs: 60200, text: "I said, ooh, I'm drowning in the night" },
+        { timeMs: 65800, text: "Oh, when I'm like this, you're the one I trust" },
+        { timeMs: 71400, text: "Hey, hey, hey" },
+        { timeMs: 90000, text: "I'm running out of time" },
+        { timeMs: 94600, text: "'Cause I can see the sun light up the sky" },
+        { timeMs: 99200, text: "So I hit the road in overdrive, baby" },
+        { timeMs: 103800, text: "Oh, the city's cold and empty" },
+        { timeMs: 108400, text: "No one's around to judge me" },
+        { timeMs: 113000, text: "I can't see clearly when you're gone" },
+        { timeMs: 119000, text: "I said, ooh, I'm blinded by the lights" },
+        { timeMs: 124600, text: "No, I can't sleep until I feel your touch" },
+        { timeMs: 130200, text: "I said, ooh, I'm drowning in the night" },
+        { timeMs: 135800, text: "Oh, when I'm like this, you're the one I trust" },
+        { timeMs: 155000, text: "I'm just walking by to let you know" },
+        { timeMs: 159600, text: "I need to be with you" },
+        { timeMs: 164200, text: "Hey, hey, hey" },
+        { timeMs: 170000, text: "I said, ooh, I'm blinded by the lights" },
+        { timeMs: 175600, text: "No, I can't sleep until I feel your touch" },
+      ],
+    },
+    {
+      title: 'bad guy',
+      language: 'en',
+      lines: [
+        { timeMs: 1000,  text: "White shirt now red, my bloody nose" },
+        { timeMs: 5400,  text: "Sleeping, you're on your tippy toes" },
+        { timeMs: 9800,  text: "Creeping around like no one knows" },
+        { timeMs: 14200, text: "Think you're so criminal" },
+        { timeMs: 18600, text: "Bruises on both my knees for you" },
+        { timeMs: 23000, text: "Don't say thank you or please" },
+        { timeMs: 27400, text: "I do what I want when I'm wanting to" },
+        { timeMs: 31800, text: "My soul, so cynical" },
+        { timeMs: 36200, text: "So you're a tough guy" },
+        { timeMs: 40600, text: "Like it really rough guy" },
+        { timeMs: 45000, text: "Just can't get enough guy" },
+        { timeMs: 49400, text: "Chest always so puffed guy" },
+        { timeMs: 53800, text: "I'm that bad type" },
+        { timeMs: 58200, text: "Make your mama sad type" },
+        { timeMs: 62600, text: "Make your girlfriend mad tight" },
+        { timeMs: 67000, text: "Might seduce your dad type" },
+        { timeMs: 71400, text: "I'm the bad guy, duh" },
+        { timeMs: 79800, text: "I'm the bad guy" },
+        { timeMs: 86000, text: "I like it when you take control" },
+        { timeMs: 90400, text: "Even if you know that you don't" },
+        { timeMs: 94800, text: "Own me, I'll let you play the role" },
+        { timeMs: 99200, text: "I'll be your animal" },
+        { timeMs: 103600, text: "My mommy likes to sing along with me" },
+        { timeMs: 108000, text: "But she won't sing this song" },
+        { timeMs: 112400, text: "If she reads all the lyrics" },
+        { timeMs: 116800, text: "She'll pity the men I know" },
+        { timeMs: 121200, text: "So you're a tough guy" },
+        { timeMs: 125600, text: "Like it really rough guy" },
+        { timeMs: 130000, text: "Just can't get enough guy" },
+        { timeMs: 134400, text: "I'm the bad guy, duh" },
+      ],
+    },
+    {
+      title: 'Anti-Hero',
+      language: 'en',
+      lines: [
+        { timeMs: 4000,  text: "I have this thing where I get older but just never wiser" },
+        { timeMs: 11200, text: "Midnights become my afternoons" },
+        { timeMs: 18400, text: "When my depression works the graveyard shift" },
+        { timeMs: 25600, text: "All of the people I've ghosted stand there in the room" },
+        { timeMs: 32800, text: "I should not be left to my own devices" },
+        { timeMs: 40000, text: "They come with prices and vices" },
+        { timeMs: 47200, text: "I end up in crisis (tale as old as time)" },
+        { timeMs: 54400, text: "I wake up screaming from dreaming" },
+        { timeMs: 61600, text: "One day I'll watch as you're leaving" },
+        { timeMs: 68800, text: "'Cause you got tired of my scheming" },
+        { timeMs: 76000, text: "(For the last time)" },
+        { timeMs: 80000, text: "It's me, hi, I'm the problem, it's me" },
+        { timeMs: 87200, text: "At teatime, everybody agrees" },
+        { timeMs: 94400, text: "I'll stare directly at the sun but never in the mirror" },
+        { timeMs: 101600, text: "It must be exhausting always rooting for the anti-hero" },
+        { timeMs: 112000, text: "Sometimes I feel like everybody is a sexy baby" },
+        { timeMs: 119200, text: "And I'm a monster on the hill" },
+        { timeMs: 126400, text: "Too big to hang out, slowly lurching toward your favorite city" },
+        { timeMs: 133600, text: "Piercing and froze that dumbstruck hill" },
+        { timeMs: 140800, text: "I have this dream my daughter-in-law kills me for the money" },
+        { timeMs: 148000, text: "She thinks I left them in the will" },
+        { timeMs: 155200, text: "The family gathers 'round and reads it" },
+        { timeMs: 162400, text: "And then someone screams out 'she's laughing up at us from hell'" },
+        { timeMs: 169600, text: "It's me, hi, I'm the problem, it's me" },
+        { timeMs: 176800, text: "At teatime, everybody agrees" },
+        { timeMs: 184000, text: "I'll stare directly at the sun but never in the mirror" },
+        { timeMs: 191200, text: "It must be exhausting always rooting for the anti-hero" },
+      ],
+    },
+  ];
+
+  for (const lyric of lyricsData) {
+    const trackRes = await db.query<{ id: string }>(
+      `SELECT id FROM tracks WHERE title = $1 LIMIT 1`,
+      [lyric.title]
+    );
+    if (!trackRes.rows[0]) continue;
+    const trackId = trackRes.rows[0].id;
+
+    const plainText = lyric.lines.map(l => l.text).join('\n');
+    await db.query(
+      `INSERT INTO lyrics (track_id, provider, content, plain_text, language, synced, fetched_at)
+       VALUES ($1, 'seed', $2, $3, $4, true, NOW())
+       ON CONFLICT (track_id) DO UPDATE
+         SET content = EXCLUDED.content,
+             plain_text = EXCLUDED.plain_text,
+             synced = EXCLUDED.synced`,
+      [trackId, JSON.stringify(lyric.lines), plainText, lyric.language]
+    );
+  }
+  console.log('✅ Lyrics seeded');
 
   // ── Genre-tagged tracks (for recommendation engine) ──────────────────────
   // Tag tracks with genres matching their artist
