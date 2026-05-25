@@ -55,13 +55,13 @@
 ```
 VyroMusic/
 ├── apps/
-│   ├── api/                    # Fastify REST API (port 3001)
+│   ├── api/                    # Fastify REST API (port 3006)
 │   │   └── src/
 │   │       ├── db/             # PostgreSQL client, migrations, seed
 │   │       ├── middleware/     # JWT auth middleware
 │   │       ├── routes/         # auth, catalog, library, search, recommendations, social
 │   │       └── services/       # business logic layer
-│   └── web/                    # Next.js 15 App Router (port 3000)
+│   └── web/                    # Next.js 15 App Router (port 3005)
 │       └── src/
 │           ├── app/
 │           │   ├── (auth)/     # login, register
@@ -129,18 +129,18 @@ cp apps/web/.env.local.example apps/web/.env.local
 
 **`apps/api/.env`**
 ```env
-PORT=3001
+PORT=3006
 NODE_ENV=development
 DATABASE_URL=postgresql://vyro:vyro@localhost:5432/vyro_music
 REDIS_URL=redis://localhost:6379
 JWT_SECRET=your-secret-256-bit-key
 JWT_REFRESH_SECRET=your-different-refresh-secret
-FRONTEND_URL=http://localhost:3000
+FRONTEND_URL=http://localhost:3005
 ```
 
 **`apps/web/.env.local`**
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_API_URL=http://localhost:3006
 ```
 
 ### 3. Start Databases
@@ -191,10 +191,10 @@ npm run dev:vyro
 
 # Or manually:
 # Terminal 1 — API
-npm run dev --workspace=apps/api    # → http://localhost:3001
+npm run dev --workspace=apps/api    # → http://localhost:3006
 
 # Terminal 2 — Web
-npm run dev --workspace=apps/web    # → http://localhost:3000
+npm run dev --workspace=apps/web    # → http://localhost:3005
 ```
 
 **Windows**
@@ -210,7 +210,7 @@ npm run dev --workspace=apps/api
 npm run dev --workspace=apps/web
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and register an account.
+Open [http://localhost:3005](http://localhost:3005) and register an account.
 
 > 💡 `npm run dev:vyro` starts all services and automatically opens in Vyro Browser if installed.
 
@@ -218,7 +218,7 @@ Open [http://localhost:3000](http://localhost:3000) and register an account.
 
 ## 📡 API Reference
 
-All endpoints are proxied through Next.js at `/api/*` → `localhost:3001/*`.
+All endpoints are proxied through Next.js at `/api/*` → `localhost:3006/*`.
 
 ### Auth
 | Method | Path | Auth | Description |
