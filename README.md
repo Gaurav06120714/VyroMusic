@@ -97,14 +97,23 @@ VyroMusic/
 | Tool | Version | Install |
 |---|---|---|
 | Node.js | 20+ | [nodejs.org](https://nodejs.org) |
-| PostgreSQL | 16 | `brew install postgresql@16` |
-| Redis | 7 | `brew install redis` |
+| PostgreSQL | 16 | macOS: `brew install postgresql@16` / Windows: [postgresql.org](https://www.postgresql.org/download/windows/) |
+| Redis | 7 | macOS: `brew install redis` / Windows: [redis.io](https://redis.io/docs/getting-started/installation/install-redis-on-windows/) |
+| Vyro Browser | latest | [VyroBrowser](https://github.com/Gaurav06120714/VyroBrowser) *(optional — auto-opens app)* |
 
 ### 1. Clone & Install
 
+**macOS**
 ```bash
-git clone https://github.com/your-username/vyro-music.git
-cd vyro-music
+git clone https://github.com/Gaurav06120714/VyroMusic.git
+cd VyroMusic
+npm install
+```
+
+**Windows**
+```powershell
+git clone https://github.com/Gaurav06120714/VyroMusic.git
+cd VyroMusic
 npm install
 ```
 
@@ -136,19 +145,31 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
 
 ### 3. Start Databases
 
-**Option A — Docker Compose (recommended)**
+**Option A — Docker Compose (recommended, all platforms)**
 ```bash
 docker compose up -d
 ```
 
-**Option B — Homebrew (macOS)**
+**Option B — macOS (Homebrew)**
 ```bash
 brew services start postgresql@16
 brew services start redis
 
-# Create DB user and database
 psql -U $(whoami) postgres -c "CREATE USER vyro WITH PASSWORD 'vyro';"
 psql -U $(whoami) postgres -c "CREATE DATABASE vyro_music OWNER vyro;"
+```
+
+**Option C — Windows**
+```powershell
+# Start PostgreSQL (installed via installer)
+net start postgresql-x64-16
+
+# Start Redis (via WSL or Redis Windows port)
+redis-server
+
+# Create DB
+psql -U postgres -c "CREATE USER vyro WITH PASSWORD 'vyro';"
+psql -U postgres -c "CREATE DATABASE vyro_music OWNER vyro;"
 ```
 
 ### 4. Run Migrations & Seed
@@ -163,17 +184,35 @@ npm run db:seed --workspace=apps/api
 
 ### 5. Start Development Servers
 
+**macOS**
 ```bash
+# All services + auto-open in Vyro Browser
+npm run dev:vyro
+
+# Or manually:
 # Terminal 1 — API
-npm run dev --workspace=apps/api
-# → http://localhost:3001
+npm run dev --workspace=apps/api    # → http://localhost:3001
 
 # Terminal 2 — Web
+npm run dev --workspace=apps/web    # → http://localhost:3000
+```
+
+**Windows**
+```powershell
+# All services + auto-open in Vyro Browser
+npm run dev:vyro
+
+# Or manually in 2 PowerShell windows:
+# Window 1 — API
+npm run dev --workspace=apps/api
+
+# Window 2 — Web
 npm run dev --workspace=apps/web
-# → http://localhost:3000
 ```
 
 Open [http://localhost:3000](http://localhost:3000) and register an account.
+
+> 💡 `npm run dev:vyro` starts all services and automatically opens in Vyro Browser if installed.
 
 ---
 
