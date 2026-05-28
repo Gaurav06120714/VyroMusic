@@ -93,17 +93,11 @@ export default function UpgradePage() {
     <div className="min-h-screen bg-[#080809] px-6 py-12">
       {/* Hero */}
       <div className="text-center mb-14 max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-vyro-500/10 border border-vyro-500/20 text-vyro-400 text-sm font-medium mb-6">
-          <Sparkles className="w-3.5 h-3.5" />
-          Premium Music Experience
-        </div>
-        <h1 className="text-5xl font-bold mb-4">
-          <span className="bg-gradient-to-r from-vyro-400 via-cyan-400 to-vyro-300 bg-clip-text text-transparent">
-            Upgrade to Premium
-          </span>
+        <h1 className="text-5xl font-bold mb-4 text-white">
+          Upgrade your plan
         </h1>
         <p className="text-white/50 text-lg">
-          Unlimited music, no ads, HiFi audio — choose the plan that fits your life.
+          No ads, better audio quality, and unlimited skips. Pick the plan that works for you.
         </p>
       </div>
 
@@ -134,7 +128,7 @@ export default function UpgradePage() {
             >
               {isPremium && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1 rounded-full bg-gradient-to-r from-vyro-500 to-cyan-500 text-white text-xs font-semibold shadow-lg">
+                  <span className="px-3 py-1 rounded-full bg-vyro-500 text-white text-xs font-semibold">
                     Most Popular
                   </span>
                 </div>
@@ -148,7 +142,7 @@ export default function UpgradePage() {
                 </div>
               )}
 
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-4 shadow-lg`}>
+              <div className={`w-12 h-12 rounded-xl bg-vyro-500/20 flex items-center justify-center text-white mb-4`}>
                 {PLAN_ICONS[plan.id]}
               </div>
 
@@ -177,7 +171,7 @@ export default function UpgradePage() {
                   isActive
                     ? 'bg-white/10 text-white/40 cursor-default'
                     : isPremium
-                    ? 'bg-gradient-to-r from-vyro-500 to-cyan-500 text-white hover:opacity-90 shadow-lg shadow-vyro-500/25 btn-neon'
+                    ? 'bg-vyro-500 text-white hover:bg-vyro-600 btn-neon'
                     : 'bg-white/10 text-white hover:bg-white/15'
                 }`}
               >
