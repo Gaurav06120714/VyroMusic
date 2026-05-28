@@ -59,15 +59,16 @@ async function bootstrap() {
   await app.register(fastifyCookie);
 
   const jwtSecret = process.env.JWT_SECRET;
-  if (!jwtSecret || jwtSecret === 'dev-secret-change-in-prod') {
+  if (!jwtSecret) {
     if (process.env.NODE_ENV === 'production') {
       throw new Error('JWT_SECRET must be set to a strong random value in production');
     }
-    app.log.warn('JWT_SECRET is not set — using insecure default (dev only)');
+    app.log.warn('JWT_SECRET is not set — using insecure dev-only fallback. Set JWT_SECRET in .env');
   }
 
+  const _devOnlyFallback = 'dev-only-unsafe-fallback:' + Math.random().toString(36);
   await app.register(fastifyJwt, {
-    secret: jwtSecret ?? 'dev-secret-change-in-prod',
+    secret: jwtSecret ?? _devOnlyFallback,
     cookie: { cookieName: 'refresh_token', signed: false },
   });
 
