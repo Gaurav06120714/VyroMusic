@@ -92,13 +92,52 @@ export default function UpgradePage() {
   return (
     <div className="min-h-screen bg-[#080809] px-6 py-12">
       {/* Hero */}
-      <div className="text-center mb-14 max-w-2xl mx-auto">
-        <h1 className="text-5xl font-bold mb-4 text-white">
-          Upgrade your plan
-        </h1>
-        <p className="text-white/50 text-lg">
-          No ads, better audio quality, and unlimited skips. Pick the plan that works for you.
-        </p>
+      <div className="text-center mb-10 max-w-2xl mx-auto">
+        <h1 className="text-5xl font-bold mb-4 text-white">Upgrade your plan</h1>
+        <p className="text-white/50 text-lg">No ads, better audio quality, and unlimited skips.</p>
+      </div>
+
+      {/* Proof panel — audio quality comparison */}
+      <div className="max-w-3xl mx-auto mb-14">
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] overflow-hidden">
+          {/* Now playing bar */}
+          <div className="flex items-center gap-4 px-6 py-4 border-b border-white/[0.06] bg-white/[0.02]">
+            <div className="w-10 h-10 rounded-lg bg-vyro-500/20 flex items-center justify-center shrink-0">
+              <Music className="w-5 h-5 text-vyro-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[13px] font-semibold text-white truncate">Blinding Lights</div>
+              <div className="text-[11px] text-white/40 truncate">The Weeknd · After Hours</div>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-vyro-500/20 text-vyro-400">HiFi</div>
+              <div className="text-[11px] text-white/30 font-mono">2:47 / 3:22</div>
+            </div>
+          </div>
+          {/* Waveform bars */}
+          <div className="px-6 py-4 border-b border-white/[0.06]">
+            <div className="flex items-center gap-[2px] h-10">
+              {[6,10,14,9,16,20,12,18,24,15,10,22,18,28,16,12,20,26,14,10,18,24,16,20,28,12,16,22,18,14,26,20,16,28,18,12,24,16,20,14,10,18,22,16,24,20,14,18,26,12,20,16,24,18,14,22,28,16,20,12,18,24,16,20,14,28,10,12,8,6,8,10,6,8,6,4,6,8,4,6].map((h, i) => (
+                <div key={i} className="flex-1 rounded-full" style={{ height: h, background: i < 66 ? '#8b5cf6' : 'rgba(255,255,255,0.12)' }} />
+              ))}
+            </div>
+          </div>
+          {/* Quality comparison */}
+          <div className="grid grid-cols-3 divide-x divide-white/[0.06]">
+            {[
+              { tier: 'Free', bitrate: '128 kbps', format: 'AAC', desc: 'Good for background listening' },
+              { tier: 'Premium', bitrate: '320 kbps', format: 'AAC', desc: 'Clear, full sound on any headphones' },
+              { tier: 'HiFi', bitrate: '1411 kbps', format: 'FLAC', desc: 'Lossless — exactly what was recorded' },
+            ].map(({ tier, bitrate, format, desc }) => (
+              <div key={tier} className="px-5 py-4">
+                <div className="text-[10px] uppercase tracking-widest text-white/30 mb-1">{tier}</div>
+                <div className="text-[18px] font-bold text-white font-mono leading-tight">{bitrate}</div>
+                <div className="text-[11px] text-vyro-400 font-semibold mb-1">{format}</div>
+                <div className="text-[11px] text-white/35 leading-snug">{desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Error */}
