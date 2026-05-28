@@ -1,3 +1,4 @@
+import { env } from '../config/env.js';
 import Redis from 'ioredis';
 
 let _client: Redis | null = null;
@@ -8,7 +9,7 @@ let _client: Redis | null = null;
  */
 export function getRedis(): Redis {
   if (!_client) {
-    _client = new Redis(process.env.REDIS_URL ?? 'redis://localhost:6379', {
+    _client = new Redis(env.REDIS_URL, {
       // Don't queue commands when Redis is unavailable — fail fast so
       // slidingWindowCheck() catches the error and fails open.
       enableOfflineQueue: false,

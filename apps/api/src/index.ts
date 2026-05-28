@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { env } from './config/env.js';
 import Fastify from 'fastify';
 import fastifyJwt from '@fastify/jwt';
 import fastifyCookie from '@fastify/cookie';
@@ -20,14 +21,14 @@ import { ipRateLimit, userRateLimit, logSecurityEvent, extractClientIp } from '.
 
 const app = Fastify({
   logger: {
-    level: process.env.LOG_LEVEL ?? (process.env.NODE_ENV === 'production' ? 'warn' : 'info'),
+    level: env.LOG_LEVEL,
   },
   /**
    * trustProxy must match your infrastructure.
    * Single Nginx/ALB in front → 1
    * Direct (dev)              → false
    */
-  trustProxy: parseInt(process.env.PROXY_DEPTH ?? '1', 10) > 0,
+  trustProxy: env.PROXY_DEPTH > 0,
 });
 
 async function bootstrap() {
@@ -48,9 +49,7 @@ async function bootstrap() {
 
   // ── CORS ──────────────────────────────────────────────────────────────────
   await app.register(fastifyCors, {
-    origin: process.env.FRONTEND_URL
-      ? process.env.FRONTEND_URL.split(',').map((o) => o.trim())
-      : 'http://localhost:3000',
+    origin: env.FRONTEND_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   });
@@ -58,17 +57,12 @@ async function bootstrap() {
   // ── Cookie + JWT ──────────────────────────────────────────────────────────
   await app.register(fastifyCookie);
 
-  const jwtSecret = process.env.JWT_SECRET;
-  if (!jwtSecret) {
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('JWT_SECRET must be set to a strong random value in production');
-    }
-    app.log.warn('JWT_SECRET is not set — using insecure dev-only fallback. Set JWT_SECRET in .env');
-  }
-
-  const _devOnlyFallback = 'dev-only-unsafe-fallback:' + Math.random().toString(36);
+  const jwtSecret = env.JWT_SECRET;
+  // JWT_SECRET validation happens in env.ts — throws in prod if unset.
+  const _devFallback = 'dev-only-unsafe:' + Math.random().toString(36);
+  if (!jwtSecret) app.log.warn('JWT_SECRET not set — using random dev-only key (tokens invalid after restart)');
   await app.register(fastifyJwt, {
-    secret: jwtSecret ?? _devOnlyFallback,
+    secret: jwtSecret || _devFallback,
     cookie: { cookieName: 'refresh_token', signed: false },
   });
 
@@ -161,9 +155,9 @@ async function bootstrap() {
     });
   });
 
-  const port = parseInt(process.env.PORT ?? '3001', 10);
+  const port = env.PORT;
   await app.listen({ port, host: '0.0.0.0' });
-  app.log.info(`🎵 Vyro Music API running on http://localhost:${port} [${process.env.NODE_ENV ?? 'development'}]`);
+  app.log.info(`🎵 Vyro Music API running on http://localhost:${port} [${env.NODE_ENV}]`);
 }
 
 bootstrap().catch((err) => {

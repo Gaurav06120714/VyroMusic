@@ -5,7 +5,8 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL || 'postgresql://vyro:vyro@localhost:5432/vyro_music' });
+if (!process.env.DATABASE_URL) { console.error("[seed] DATABASE_URL not set"); process.exit(1); }
+const pool = new Pool({ connectionString: process.env.DATABASE_URL ?? '' });
 
 // ── Artist lists by language ──────────────────────────────────────────────────
 

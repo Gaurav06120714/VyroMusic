@@ -1,3 +1,4 @@
+import { env } from '../config/env.js';
 import { Pool } from 'pg';
 
 let pool: Pool | null = null;
@@ -5,7 +6,7 @@ let pool: Pool | null = null;
 export function getDb(): Pool {
   if (!pool) {
     pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: env.DATABASE_URL,
       max: 20,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 2000,

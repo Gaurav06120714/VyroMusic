@@ -1,5 +1,14 @@
 version: '3.9'
 
+# =============================================================================
+# VyroMusic — Docker Compose (development / local)
+#
+# Secret management:
+#   - Secrets come from apps/api/.env (gitignored, never committed).
+#   - Setup: cp apps/api/.env.example apps/api/.env && fill in values.
+#   - The `environment:` block only overrides service-discovery URLs.
+# =============================================================================
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -20,7 +29,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - '6379:6379'
+      - '127.0.0.1:6379:6379'
     volumes:
       - redis_data:/data
     healthcheck:
@@ -28,6 +37,28 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  api:
+    build:
+      context: apps/api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - '3006:3006'
+    env_file:
+      # Must exist locally. NEVER committed.
+      # Setup: cp apps/api/.env.example apps/api/.env
+      - apps/api/.env
+    environment:
+      # Service-discovery overrides only
+      DATABASE_URL: postgresql://vyro:vyro@postgres:5432/vyro_music
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   postgres_data:

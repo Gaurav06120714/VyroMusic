@@ -1,3 +1,4 @@
+import { env } from '../config/env.js';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const StripeLib = require('stripe');
@@ -10,21 +11,21 @@ const PLANS = [
     id: 'premium',
     name: 'Premium',
     price: 999,
-    priceId: process.env.STRIPE_PREMIUM_PRICE_ID,
+    priceId: env.STRIPE_PREMIUM_PRICE_ID,
     features: ['No ads', 'Unlimited skips', 'Offline mode', 'HiFi audio'],
   },
   {
     id: 'family',
     name: 'Family',
     price: 1499,
-    priceId: process.env.STRIPE_FAMILY_PRICE_ID,
+    priceId: env.STRIPE_FAMILY_PRICE_ID,
     features: ['6 accounts', 'All Premium features', 'Family Mix playlist'],
   },
   {
     id: 'student',
     name: 'Student',
     price: 499,
-    priceId: process.env.STRIPE_STUDENT_PRICE_ID,
+    priceId: env.STRIPE_STUDENT_PRICE_ID,
     features: ['50% off Premium', 'Verify annually'],
   },
 ] as const;
@@ -33,8 +34,8 @@ type PlanId = 'free' | 'premium' | 'family' | 'student';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function getStripe(): StripeType | null {
-  if (!process.env.STRIPE_SECRET_KEY) return null;
-  return new StripeLib(process.env.STRIPE_SECRET_KEY, { apiVersion: '2026-04-22.dahlia' }) as StripeType;
+  if (!env.STRIPE_SECRET_KEY) return null;
+  return new StripeLib(env.STRIPE_SECRET_KEY, { apiVersion: '2026-04-22.dahlia' }) as StripeType;
 }
 
 function requireAuth(app: FastifyInstance) {
@@ -98,8 +99,8 @@ export async function billingRoutes(app: FastifyInstance) {
           customer: customerId,
           mode: 'subscription',
           line_items: [{ price: plan.priceId, quantity: 1 }],
-          success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/upgrade/success`,
-          cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/upgrade/cancel`,
+          success_url: `${env.FRONTEND_URL[0]}/upgrade/success`,
+          cancel_url: `${env.FRONTEND_URL[0]}/upgrade/cancel`,
           metadata: { userId: payload.sub, planId },
         });
 
@@ -136,7 +137,7 @@ export async function billingRoutes(app: FastifyInstance) {
 
         const session = await stripe.billingPortal.sessions.create({
           customer: customerId,
-          return_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/upgrade`,
+          return_url: `${env.FRONTEND_URL[0]}/upgrade`,
         });
 
         return { url: session.url };
@@ -158,7 +159,7 @@ export async function billingRoutes(app: FastifyInstance) {
 
   app.post('/billing/webhook', async (req, reply) => {
     const stripe = getStripe();
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
 
     if (!stripe || !webhookSecret) {
       app.log.warn('Stripe webhook received but Stripe is not configured');
