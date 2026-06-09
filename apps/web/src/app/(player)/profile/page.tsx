@@ -79,11 +79,11 @@ export default function ProfilePage() {
 
   return (
     <div className="overflow-y-auto pb-8 animate-fadeIn">
-      {/* Hero with gradient */}
+      {}
       <div className="relative px-6 md:px-8 pt-8 md:pt-12 pb-8">
         <div className="absolute inset-0 bg-gradient-to-b from-vyro-900/25 to-transparent pointer-events-none" />
         <div className="relative flex flex-col sm:flex-row items-start sm:items-end gap-5 md:gap-6">
-          {/* Avatar with gradient ring */}
+          {}
           <div className="relative shrink-0">
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-vyro-500 to-cyan-500 blur-md opacity-50 scale-110" />
             <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden ring-2 ring-white/15 shadow-2xl">
@@ -115,7 +115,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="px-6 md:px-8 space-y-8">
-        {/* Stats grid */}
+        {}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
           {[
             { icon: <Music className="w-5 h-5" />, label: 'Liked Songs', value: profile.stats.likedTracks, color: 'text-vyro-400' },
@@ -136,7 +136,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-          {/* Genre breakdown */}
+          {}
           {genres.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-5">
@@ -163,7 +163,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {/* Top artists */}
+          {}
           {topArtists.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-5">
@@ -204,7 +204,7 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* No data */}
+        {}
         {genres.length === 0 && topArtists.length === 0 && (
           <div className="text-center py-16 text-white/25">
             <Headphones className="w-12 h-12 mx-auto mb-3 opacity-30" />
