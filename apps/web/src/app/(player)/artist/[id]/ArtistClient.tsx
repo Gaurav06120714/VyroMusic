@@ -69,7 +69,7 @@ export function ArtistClient({ artistId, artist, tracks, albums }: Props) {
 
   return (
     <div className="pb-8 animate-fadeIn">
-      {/* Hero */}
+      {}
       <div className="relative h-48 md:h-72 overflow-hidden">
         {artist.coverUrl || artist.avatarUrl ? (
           <Image
@@ -82,7 +82,7 @@ export function ArtistClient({ artistId, artist, tracks, albums }: Props) {
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-vyro-800 via-vyro-900 to-cyan-900" />
         )}
-        {/* Multi-stop gradient overlay */}
+        {}
         <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-[#050508]/40 to-transparent" />
 
         <div className="absolute bottom-0 left-0 right-0 px-6 md:px-8 pb-6">
@@ -104,7 +104,7 @@ export function ArtistClient({ artistId, artist, tracks, albums }: Props) {
         </div>
       </div>
 
-      {/* Action bar */}
+      {}
       <div className="px-4 md:px-8 mt-6 flex items-center gap-3 flex-wrap">
         <button
           onClick={() => playAll(false)}
@@ -144,7 +144,7 @@ export function ArtistClient({ artistId, artist, tracks, albums }: Props) {
         )}
       </div>
 
-      {/* Tab navigation */}
+      {}
       <div className="px-6 md:px-8 mt-8 mb-6 flex gap-1 border-b border-white/[0.07]">
         {TABS.map(tab => (
           <button
@@ -165,7 +165,7 @@ export function ArtistClient({ artistId, artist, tracks, albums }: Props) {
       </div>
 
       <div className="px-4 md:px-6 space-y-10">
-        {/* Popular tracks */}
+        {}
         {activeTab === 'popular' && tracks.length > 0 && (
           <div className="space-y-0.5">
             {tracks.map((track, i) => (
@@ -180,21 +180,21 @@ export function ArtistClient({ artistId, artist, tracks, albums }: Props) {
           </div>
         )}
 
-        {/* Discography */}
+        {}
         {activeTab === 'albums' && albums.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {albums.map(album => <AlbumCard key={album.id} album={album} />)}
           </div>
         )}
 
-        {/* About */}
+        {}
         {activeTab === 'about' && artist.bio && (
           <div className="max-w-2xl">
             <p className="text-white/60 leading-relaxed text-[15px]">{artist.bio}</p>
           </div>
         )}
 
-        {/* Empty states */}
+        {}
         {activeTab === 'popular' && tracks.length === 0 && (
           <p className="text-white/25 text-sm py-8 text-center">No tracks available yet</p>
         )}
