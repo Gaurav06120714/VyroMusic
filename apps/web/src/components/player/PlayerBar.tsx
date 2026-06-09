@@ -57,7 +57,6 @@ export function PlayerBar() {
     </div>
   );
 
-  // Use store durationMs (populated from actual audio element) — falls back to track object if audio hasn't loaded yet
   const durationMs = storeDurationMs || currentTrack.durationMs || 0;
   const progress = durationMs > 0 ? Math.min(currentMs / durationMs, 1) : 0;
   const elapsed = formatMs(currentMs);
@@ -96,9 +95,9 @@ export function PlayerBar() {
       className="h-20 border-t border-white/[0.04] flex items-center px-3 md:px-5 gap-3 md:gap-4 shrink-0 z-40"
       style={{ background: 'rgba(5,5,8,0.85)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)' }}
     >
-      {/* Track info — left */}
+      {}
       <div className="flex items-center gap-3 w-[180px] md:w-64 min-w-0 shrink-0">
-        {/* Cover art */}
+        {}
         <div className="relative w-11 h-11 md:w-12 md:h-12 shrink-0 rounded-lg overflow-hidden bg-white/5 shadow-lg shadow-black/60 ring-1 ring-white/5">
           {currentTrack.album?.coverUrl ? (
             <Image
@@ -117,7 +116,7 @@ export function PlayerBar() {
           )}
         </div>
 
-        {/* Title + artist */}
+        {}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5 mb-0.5">
             {isPlaying && <EqualizerBars />}
@@ -128,7 +127,7 @@ export function PlayerBar() {
           <p className="text-xs text-white/40 truncate">{currentTrack.artist?.name}</p>
         </div>
 
-        {/* Heart — desktop only */}
+        {}
         {user && (
           <button
             onClick={handleLike}
@@ -139,7 +138,7 @@ export function PlayerBar() {
           </button>
         )}
 
-        {/* Radio badge */}
+        {}
         {playMode === 'radio' && (
           <span className="hidden md:flex shrink-0 text-cyan-400/70 text-[9px] font-bold items-center gap-0.5 bg-cyan-400/10 px-1.5 py-0.5 rounded-full">
             <Radio className="w-2.5 h-2.5" /> RADIO
@@ -147,10 +146,10 @@ export function PlayerBar() {
         )}
       </div>
 
-      {/* Controls — center */}
+      {}
       <div className="flex flex-col items-center flex-1 gap-1.5 min-w-0">
         <div className="flex items-center gap-4 md:gap-5">
-          {/* Shuffle */}
+          {}
           <button
             onClick={toggleShuffle}
             className={`hidden md:block transition-all duration-150 hover:scale-110 ${shuffle ? 'text-vyro-400' : 'text-white/30 hover:text-white'}`}
@@ -161,14 +160,14 @@ export function PlayerBar() {
             </svg>
           </button>
 
-          {/* Prev */}
+          {}
           <button onClick={prev} className="text-white/50 hover:text-white transition-all hover:scale-110 active:scale-95">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
             </svg>
           </button>
 
-          {/* Play/Pause */}
+          {}
           <button
             onClick={togglePlay}
             className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-white transition-all active:scale-95 hover:scale-105 shrink-0"
@@ -191,14 +190,14 @@ export function PlayerBar() {
             )}
           </button>
 
-          {/* Next */}
+          {}
           <button onClick={next} className="text-white/50 hover:text-white transition-all hover:scale-110 active:scale-95">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
             </svg>
           </button>
 
-          {/* Repeat */}
+          {}
           <button
             onClick={cycleRepeat}
             className={`hidden md:block transition-all duration-150 hover:scale-110 relative ${repeat !== 'off' ? 'text-vyro-400' : 'text-white/30 hover:text-white'}`}
@@ -213,7 +212,7 @@ export function PlayerBar() {
           </button>
         </div>
 
-        {/* Progress bar */}
+        {}
         <div className="flex items-center gap-2.5 w-full max-w-lg md:max-w-xl">
           <span className="text-[10px] text-white/25 w-8 text-right font-mono tabular-nums hidden md:block">{elapsed}</span>
           <div
@@ -229,9 +228,9 @@ export function PlayerBar() {
         </div>
       </div>
 
-      {/* Right controls — desktop */}
+      {}
       <div className="hidden md:flex items-center gap-2.5 w-64 justify-end shrink-0">
-        {/* Radio */}
+        {}
         <button
           onClick={() => startRadio(currentTrack)}
           className={`p-2 rounded-lg transition-all hover:scale-110 ${playMode === 'radio' ? 'text-cyan-400' : 'text-white/30 hover:text-cyan-400'}`}
@@ -240,7 +239,7 @@ export function PlayerBar() {
           <Radio className="w-4 h-4" />
         </button>
 
-        {/* Lyrics */}
+        {}
         <button
           onClick={toggleLyrics}
           className={`p-2 rounded-lg transition-all hover:scale-110 ${showLyrics ? 'text-vyro-400 bg-vyro-500/10' : 'text-white/30 hover:text-white'}`}
@@ -249,7 +248,7 @@ export function PlayerBar() {
           <Mic2 className="w-4 h-4" />
         </button>
 
-        {/* Queue */}
+        {}
         <button
           onClick={toggleQueue}
           className={`p-2 rounded-lg transition-all hover:scale-110 ${showQueue ? 'text-vyro-400 bg-vyro-500/10' : 'text-white/30 hover:text-white'}`}
@@ -260,7 +259,7 @@ export function PlayerBar() {
           </svg>
         </button>
 
-        {/* Volume */}
+        {}
         <div className="flex items-center gap-2">
           <button
             onClick={toggleMute}
