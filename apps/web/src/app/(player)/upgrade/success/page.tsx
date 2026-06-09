@@ -7,7 +7,6 @@ import { useAuthStore } from '@/store/auth.store';
 export default function UpgradeSuccessPage() {
   const refresh = useAuthStore(s => s.refresh);
 
-  // Refresh user data so the new subscription tier is reflected immediately
   useEffect(() => {
     refresh().catch(() => {});
   }, [refresh]);
@@ -15,7 +14,7 @@ export default function UpgradeSuccessPage() {
   return (
     <div className="min-h-screen bg-[#080809] flex items-center justify-center px-6">
       <div className="text-center max-w-md">
-        {/* Glow ring */}
+        {}
         <div className="relative inline-flex mb-8">
           <div className="absolute inset-0 rounded-full bg-vyro-500/30 blur-2xl scale-150" />
           <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-vyro-500 to-cyan-500 flex items-center justify-center shadow-2xl shadow-vyro-500/40">
