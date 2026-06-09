@@ -40,7 +40,7 @@ export default function LibraryPage() {
 
   return (
     <div className="pb-8 animate-fadeIn">
-      {/* Blurred hero gradient header */}
+      {}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-vyro-900/30 via-[#050508]/70 to-[#050508]" />
         <div className="relative flex flex-col sm:flex-row items-start sm:items-end gap-5 md:gap-6 p-6 md:p-8 pt-10">
