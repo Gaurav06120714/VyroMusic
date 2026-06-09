@@ -29,7 +29,7 @@ export function MiniPlayer() {
               boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
             }}
           >
-            {/* Cover art — tap to go to now-playing */}
+            {}
             <button
               onClick={() => router.push('/now-playing')}
               className="relative w-10 h-10 rounded-xl overflow-hidden shrink-0 bg-white/10"
@@ -49,7 +49,7 @@ export function MiniPlayer() {
               )}
             </button>
 
-            {/* Track info — tap to go to now-playing */}
+            {}
             <button
               onClick={() => router.push('/now-playing')}
               className="flex-1 min-w-0 text-left"
@@ -63,7 +63,7 @@ export function MiniPlayer() {
               </p>
             </button>
 
-            {/* Play/Pause */}
+            {}
             <motion.button
               whileTap={{ scale: 0.85 }}
               onClick={(e) => { e.stopPropagation(); togglePlay(); }}
@@ -77,7 +77,7 @@ export function MiniPlayer() {
               )}
             </motion.button>
 
-            {/* Next */}
+            {}
             <motion.button
               whileTap={{ scale: 0.85 }}
               onClick={(e) => { e.stopPropagation(); next(); }}
