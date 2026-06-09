@@ -1,51 +1,28 @@
-/**
- * Centralized environment configuration for VyroMusic API.
- *
- * All process.env access MUST go through this module.
- * Never read process.env directly in route/service files — import from here.
- *
- * Validates required variables at startup so the server fails fast with a
- * clear message rather than crashing with an obscure runtime error later.
- *
- * Usage:
- *   import { env } from '../config/env.js';
- */
-
 import 'dotenv/config';
-
-// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Env {
   NODE_ENV: 'development' | 'staging' | 'production' | 'test';
   LOG_LEVEL: string;
 
-  // Server
   PORT: number;
-  FRONTEND_URL: string[];   // parsed from comma-separated string
+  FRONTEND_URL: string[];   
 
-  // Database
   DATABASE_URL: string;
 
-  // Redis
   REDIS_URL: string;
 
-  // Auth / JWT
   JWT_SECRET: string;
   JWT_REFRESH_SECRET: string;
 
-  // Proxy / Rate limiting
   PROXY_DEPTH: number;
   IP_HASH_SALT: string;
 
-  // Stripe
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
   STRIPE_PREMIUM_PRICE_ID: string;
   STRIPE_FAMILY_PRICE_ID: string;
   STRIPE_STUDENT_PRICE_ID: string;
 }
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function required(name: string): string {
   const value = process.env[name];
@@ -75,8 +52,6 @@ function parseFrontendUrl(raw: string | undefined): string[] {
   if (!raw) return fallback;
   return raw.split(',').map((o) => o.trim()).filter(Boolean);
 }
-
-// ── Production-safety checks ─────────────────────────────────────────────────
 
 function validateProductionConfig(parsed: Env): void {
   if (parsed.NODE_ENV !== 'production') return;
@@ -108,8 +83,6 @@ function validateProductionConfig(parsed: Env): void {
     );
   }
 }
-
-// ── Parse and export ──────────────────────────────────────────────────────────
 
 function buildEnv(): Env {
   const nodeEnv = optional('NODE_ENV', 'development') as Env['NODE_ENV'];
