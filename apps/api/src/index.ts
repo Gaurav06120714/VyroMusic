@@ -23,16 +23,12 @@ const app = Fastify({
   logger: {
     level: env.LOG_LEVEL,
   },
-  /**
-   * trustProxy must match your infrastructure.
-   * Single Nginx/ALB in front → 1
-   * Direct (dev)              → false
-   */
+  
   trustProxy: env.PROXY_DEPTH > 0,
 });
 
 async function bootstrap() {
-  // ── Security headers ──────────────────────────────────────────────────────
+  
   await app.register(fastifyHelmet, {
     contentSecurityPolicy: {
       directives: {
@@ -47,18 +43,16 @@ async function bootstrap() {
     },
   });
 
-  // ── CORS ──────────────────────────────────────────────────────────────────
   await app.register(fastifyCors, {
     origin: env.FRONTEND_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   });
 
-  // ── Cookie + JWT ──────────────────────────────────────────────────────────
   await app.register(fastifyCookie);
 
   const jwtSecret = env.JWT_SECRET;
-  // JWT_SECRET validation happens in env.ts — throws in prod if unset.
+  
   const _devFallback = 'dev-only-unsafe:' + Math.random().toString(36);
   if (!jwtSecret) app.log.warn('JWT_SECRET not set — using random dev-only key (tokens invalid after restart)');
   await app.register(fastifyJwt, {
@@ -66,9 +60,6 @@ async function bootstrap() {
     cookie: { cookieName: 'refresh_token', signed: false },
   });
 
-  // ── Global rate limiting (Redis-backed) ───────────────────────────────────
-  // 200 requests / min / IP — broad limit to catch floods before routing.
-  // Stripe webhook (/billing/webhook) is intentionally exempted below.
   await app.register(fastifyRateLimit, {
     global: true,
     max: 200,
@@ -93,44 +84,36 @@ async function bootstrap() {
     },
   });
 
-  // ── Routes ────────────────────────────────────────────────────────────────
-  await app.register(authRoutes);           // /auth/*
+  await app.register(authRoutes);           
 
-  // /billing — checkout and portal have strict per-user limits to prevent
-  // session flooding. Webhook is exempt from rate limiting (Stripe signature
-  // is the trust boundary there).
   await app.register(async (billingInstance) => {
-    // Exempt /billing/webhook from rate limiting — Stripe retries on failure,
-    // and rate-limiting it would cause missed webhook events.
+    
     billingInstance.addHook('preHandler', async (req, reply) => {
-      if (req.routerPath === '/billing/webhook') return; // skip for webhook
+      if (req.routerPath === '/billing/webhook') return; 
       return ipRateLimit(60, 60_000, 'billing:ip')(req, reply);
     });
 
-    // Per-user limits on expensive Stripe operations
     billingInstance.addHook('preHandler', async (req, _reply) => {
-      // attach user if JWT present (best-effort — billing routes do their own auth)
-      try { await req.jwtVerify(); } catch { /* not logged in — IP limit only */ }
+      
+      try { await req.jwtVerify(); } catch {  }
     });
 
     await billingInstance.register(billingRoutes);
   });
 
-  await app.register(catalogRoutes);        // /tracks/*, /albums/*, /artists/*
+  await app.register(catalogRoutes);        
 
-  // /search — stricter: 30 / min / IP (search can be expensive)
   await app.register(async (searchInstance) => {
     searchInstance.addHook('preHandler', ipRateLimit(30, 60_000, 'search:ip'));
     await searchInstance.register(searchRoutes);
   });
 
-  await app.register(libraryRoutes);        // /me/library/*, /playlists/*
-  await app.register(recommendationRoutes); // /recommendations/*
-  await app.register(socialRoutes);         // /me/profile, /artists/:id/follow
+  await app.register(libraryRoutes);        
+  await app.register(recommendationRoutes); 
+  await app.register(socialRoutes);         
   await app.register(itunesRoutes, { prefix: '/itunes' });
   await app.register(youtubeRoutes);
 
-  // ── Health (exempt from rate limiting) ───────────────────────────────────
   app.get('/health', {
     config: { rateLimit: false },
   }, async () => ({
@@ -139,12 +122,10 @@ async function bootstrap() {
     timestamp: new Date().toISOString(),
   }));
 
-  // ── 404 ───────────────────────────────────────────────────────────────────
   app.setNotFoundHandler((_req, reply) => {
     reply.status(404).send({ error: 'Route not found', statusCode: 404 });
   });
 
-  // ── Error handler ─────────────────────────────────────────────────────────
   app.setErrorHandler((err, request, reply) => {
     if ((err.statusCode ?? 500) >= 500) {
       app.log.error({ err, path: request.url }, 'Unhandled server error');
