@@ -141,7 +141,6 @@ export default function SearchPage() {
     setRecentSearches(loadRecent());
   }, []);
 
-  // Keyboard shortcut: Escape clears search
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && query) {
@@ -197,7 +196,6 @@ export default function SearchPage() {
   const hasAnyResults = hasLocalResults || itunesTracks.length > 0;
   const topTrack = results?.tracks[0] ?? null;
 
-  // Apply client-side filters + sort
   const filteredTracks = selectedGenre && results?.tracks
     ? results.tracks.filter(t => t.genres?.some(g => g.toLowerCase().includes(selectedGenre.toLowerCase())))
     : results?.tracks ?? [];
@@ -213,7 +211,7 @@ export default function SearchPage() {
 
   return (
     <div className="px-4 md:px-8 py-6 md:py-8 space-y-6 pb-8 animate-fadeIn">
-      {/* Search bar */}
+      {}
       <div className="relative max-w-3xl">
         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
           <Search className="w-5 h-5 text-white/30" />
@@ -246,7 +244,7 @@ export default function SearchPage() {
         </div>
       </div>
 
-      {/* Filter pills + filter toggle — shown when there are results */}
+      {}
       {hasAnyResults && !loading && (
         <div className="flex items-center gap-2">
           <div className="flex gap-2 overflow-x-auto pb-1 flex-1 scrollbar-none">
@@ -276,7 +274,7 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* Filter drawer */}
+      {}
       <AnimatePresence>
         {showFilters && hasAnyResults && (
           <motion.div
@@ -287,7 +285,7 @@ export default function SearchPage() {
             className="overflow-hidden"
           >
             <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/[0.07] space-y-4">
-              {/* Genre */}
+              {}
               <div>
                 <p className="text-[11px] font-semibold text-white/30 uppercase tracking-widest mb-2">Genre</p>
                 <div className="flex flex-wrap gap-2">
@@ -307,7 +305,7 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              {/* Sort */}
+              {}
               <div>
                 <p className="text-[11px] font-semibold text-white/30 uppercase tracking-widest mb-2">Sort by</p>
                 <div className="flex gap-2">
@@ -327,7 +325,7 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              {/* Clear all */}
+              {}
               {(selectedGenre || selectedSort !== 'trending') && (
                 <button
                   onClick={() => { setSelectedGenre(null); setSelectedSort('trending'); }}
@@ -341,13 +339,13 @@ export default function SearchPage() {
         )}
       </AnimatePresence>
 
-      {/* Results */}
+      {}
       {hasAnyResults && !loading && (
         <div className="space-y-8">
-          {/* Top result + Songs split */}
+          {}
           {(activeTab === 'all' || activeTab === 'songs') && topTrack && sortedTracks.length > 0 && (
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-              {/* Top result card — desktop only */}
+              {}
               {activeTab === 'all' && (
                 <div className="hidden lg:block lg:col-span-2">
                   <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-3">Top Result</h2>
@@ -355,7 +353,7 @@ export default function SearchPage() {
                     onClick={() => { setQueue(sortedTracks); playTrack(topTrack); }}
                     className="w-full text-left p-5 rounded-2xl glass-card hover:bg-white/[0.08] transition-all group relative overflow-hidden"
                   >
-                    {/* Background blur from cover art */}
+                    {}
                     {topTrack.album?.coverUrl && (
                       <div className="absolute inset-0 opacity-15 scale-110">
                         <Image src={topTrack.album.coverUrl} alt="" fill className="object-cover blur-2xl" unoptimized sizes="300px" />
@@ -384,7 +382,7 @@ export default function SearchPage() {
                 </div>
               )}
 
-              {/* Songs list */}
+              {}
               <div className={activeTab === 'all' ? 'lg:col-span-3' : 'lg:col-span-5'}>
                 <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-3">Songs</h2>
                 <div className="space-y-0.5">
@@ -403,7 +401,7 @@ export default function SearchPage() {
             </div>
           )}
 
-          {/* Artists grid */}
+          {}
           {(activeTab === 'all' || activeTab === 'artists') && results && results.artists.length > 0 && (
             <section>
               <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-4">Artists</h2>
@@ -413,7 +411,7 @@ export default function SearchPage() {
             </section>
           )}
 
-          {/* Albums grid */}
+          {}
           {(activeTab === 'all' || activeTab === 'albums') && results && results.albums.length > 0 && (
             <section>
               <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-4">Albums</h2>
@@ -423,7 +421,7 @@ export default function SearchPage() {
             </section>
           )}
 
-          {/* iTunes section */}
+          {}
           {(activeTab === 'all' || activeTab === 'itunes') && itunesTracks.length > 0 && (
             <section>
               <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-3">
@@ -461,7 +459,7 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* Loading skeleton */}
+      {}
       {loading && (
         <div className="space-y-8">
           <TrackSkeleton />
@@ -473,10 +471,10 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* Empty query state */}
+      {}
       {!query && (
         <div className="space-y-8">
-          {/* Recent searches */}
+          {}
           {recentSearches.length > 0 && (
             <section>
               <div className="flex items-center justify-between mb-4">
@@ -512,7 +510,7 @@ export default function SearchPage() {
             </section>
           )}
 
-          {/* Trending */}
+          {}
           <section>
             <h2 className="flex items-center gap-2 text-base font-bold text-white mb-4">
               <TrendingUp className="w-4 h-4 text-vyro-400" /> Trending searches
@@ -530,7 +528,7 @@ export default function SearchPage() {
             </div>
           </section>
 
-          {/* Genre browse cards */}
+          {}
           <section>
             <h2 className="text-base font-bold text-white mb-4">Browse by genre</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -551,7 +549,7 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* No results */}
+      {}
       {query && !loading && !hasAnyResults && (
         <div className="text-center py-24">
           <div className="w-20 h-20 rounded-full bg-white/[0.04] border border-white/[0.07] flex items-center justify-center mx-auto mb-5 shadow-inner">
