@@ -62,7 +62,7 @@ export function TrackRow({ track, index, showAlbum = false, onPlay, onStartRadio
         isActive ? 'bg-vyro-500/10 border border-vyro-500/15' : 'hover:bg-white/[0.05] border border-transparent'
       }`}
     >
-      {/* Index / play indicator */}
+      {}
       <div className="w-7 shrink-0 flex items-center justify-center">
         {isActive ? (
           <div className="flex items-end gap-0.5 h-4">
@@ -89,7 +89,7 @@ export function TrackRow({ track, index, showAlbum = false, onPlay, onStartRadio
         )}
       </div>
 
-      {/* Album art */}
+      {}
       <div className="relative w-10 h-10 shrink-0 rounded-lg overflow-hidden bg-white/5 shadow-sm">
         {track.album?.coverUrl ? (
           <Image src={track.album.coverUrl} alt={track.title} fill className="object-cover" unoptimized />
@@ -98,7 +98,7 @@ export function TrackRow({ track, index, showAlbum = false, onPlay, onStartRadio
         )}
       </div>
 
-      {/* Track info */}
+      {}
       <div className="flex-1 min-w-0">
         <p className={`text-sm font-semibold truncate leading-snug ${isActive ? 'text-vyro-300' : 'text-white'}`}>
           {track.title}
@@ -112,7 +112,7 @@ export function TrackRow({ track, index, showAlbum = false, onPlay, onStartRadio
         </p>
       </div>
 
-      {/* Actions */}
+      {}
       <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
         {user && (
           <button
@@ -139,12 +139,12 @@ export function TrackRow({ track, index, showAlbum = false, onPlay, onStartRadio
         </button>
       </div>
 
-      {/* Duration */}
+      {}
       <span className="text-xs text-white/25 font-mono shrink-0 w-10 text-right tabular-nums">
         {formatMs(track.durationMs)}
       </span>
 
-      {/* Context menu */}
+      {}
       {showMenu && (
         <div
           className="absolute right-4 top-12 z-50 rounded-xl p-1 min-w-[168px] shadow-2xl animate-scaleIn"
