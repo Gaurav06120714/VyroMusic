@@ -13,8 +13,6 @@ import {
 export async function authRoutes(app: FastifyInstance) {
   const authService = new AuthService(getDb());
 
-  // ── POST /auth/register ──────────────────────────────────────────────────────
-  // 3 / hr / IP + bot check
   app.post('/auth/register', {
     preHandler: [
       botCheck(),
@@ -62,8 +60,6 @@ export async function authRoutes(app: FastifyInstance) {
     }
   });
 
-  // ── POST /auth/login ─────────────────────────────────────────────────────────
-  // 5 / 15 min / IP  +  3 / 15 min / email  +  progressive lockout
   app.post('/auth/login', {
     preHandler: [loginRateLimit()],
   }, async (req, reply) => {
@@ -73,7 +69,6 @@ export async function authRoutes(app: FastifyInstance) {
     try {
       const user = await authService.login(email, password);
 
-      // Successful login — clear failure counters
       await recordLoginSuccess(req, email);
 
       const accessToken = app.jwt.sign({ sub: user.id, email: user.email }, { expiresIn: '15m' });
@@ -93,14 +88,12 @@ export async function authRoutes(app: FastifyInstance) {
 
       return { accessToken, user };
     } catch {
-      // Record the failure against both IP and email for progressive lockout
+      
       await recordLoginFailure(req, email);
       reply.status(401).send({ error: 'Invalid credentials' });
     }
   });
 
-  // ── POST /auth/refresh ───────────────────────────────────────────────────────
-  // 10 / min / IP — prevent refresh token brute-force
   app.post('/auth/refresh', {
     preHandler: [ipRateLimit(10, 60_000, 'auth:refresh')],
   }, async (req, reply) => {
@@ -114,7 +107,6 @@ export async function authRoutes(app: FastifyInstance) {
     const user = await authService.getUserById(userId);
     if (!user) return reply.status(401).send({ error: 'User not found' });
 
-    // Rotate refresh token (one-time use)
     await authService.revokeRefreshToken(hash);
     const newRefreshToken = crypto.randomBytes(64).toString('hex');
     const newHash = crypto.createHash('sha256').update(newRefreshToken).digest('hex');
@@ -143,7 +135,6 @@ export async function authRoutes(app: FastifyInstance) {
     };
   });
 
-  // ── POST /auth/logout ────────────────────────────────────────────────────────
   app.post('/auth/logout', async (req, reply) => {
     const refreshToken = req.cookies.refresh_token;
     if (refreshToken) {
@@ -154,7 +145,6 @@ export async function authRoutes(app: FastifyInstance) {
     return { ok: true };
   });
 
-  // ── GET /auth/me ─────────────────────────────────────────────────────────────
   app.get('/auth/me', {
     preHandler: [async (req, reply) => {
       try { await req.jwtVerify(); }
