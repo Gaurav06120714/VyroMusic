@@ -1,14 +1,8 @@
-/**
- * Mass iTunes seeder — fetches Telugu, Hindi, English songs and inserts into DB.
- * Run: npx tsx src/scripts/seed-songs.ts
- */
 import 'dotenv/config';
 import { Pool } from 'pg';
 
 if (!process.env.DATABASE_URL) { console.error("[seed] DATABASE_URL not set"); process.exit(1); }
 const pool = new Pool({ connectionString: process.env.DATABASE_URL ?? '' });
-
-// ── Artist lists by language ──────────────────────────────────────────────────
 
 const TELUGU_ARTISTS = [
   'SP Balasubrahmanyam', 'Sid Sriram', 'Devi Sri Prasad', 'SS Thaman',
@@ -71,12 +65,11 @@ function coverUrl(url: string): string {
 }
 
 async function upsertTrack(client: import('pg').PoolClient, track: ItunesResult, language: string) {
-  // Use a deterministic UUID-formatted ID from the iTunes trackId
+  
   const itunesNum = track.trackId;
   const hex = itunesNum.toString(16).padStart(32, '0');
   const trackId = `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20,32)}`;
 
-  // Upsert artist
   const artistRes = await client.query(
     `INSERT INTO artists (id, name, verified, monthly_listeners, genres, country)
      VALUES (gen_random_uuid(), $1, false, $2, $3, $4)
@@ -91,7 +84,6 @@ async function upsertTrack(client: import('pg').PoolClient, track: ItunesResult,
   );
   const artistId = artistRes.rows[0].id;
 
-  // Upsert album
   const albumRes = await client.query(
     `INSERT INTO albums (id, artist_id, title, cover_url, release_date, album_type, total_tracks)
      VALUES (gen_random_uuid(), $1, $2, $3, $4, 'album', 10)
@@ -106,7 +98,6 @@ async function upsertTrack(client: import('pg').PoolClient, track: ItunesResult,
   );
   const albumId = albumRes.rows[0].id;
 
-  // Upsert track — store iTunes ID in preview_url metadata, use UUID as PK
   await client.query(
     `INSERT INTO tracks (id, album_id, artist_id, title, duration_ms, preview_url, track_number,
       explicit, status, genres, play_count, like_count, source)
@@ -149,7 +140,7 @@ async function seedArtists(artists: string[], language: string) {
     } catch (e) {
       console.error(`  ✗ ${artist}:`, (e as Error).message);
     }
-    // Rate limit: be polite to iTunes API
+    
     await new Promise(r => setTimeout(r, 300));
   }
   return total;
@@ -159,12 +150,10 @@ async function main() {
   console.log('🎵 Vyro Music — Mass Song Seeder');
   console.log('━'.repeat(50));
 
-  // Add unique constraint on artists.name if not exists
   await pool.query(`
     ALTER TABLE artists ADD CONSTRAINT IF NOT EXISTS artists_name_unique UNIQUE (name);
   `).catch(() => {});
 
-  // Add unique constraint on albums(title, artist_id) if not exists
   await pool.query(`
     ALTER TABLE albums ADD CONSTRAINT IF NOT EXISTS albums_title_artist_unique UNIQUE (title, artist_id);
   `).catch(() => {});
