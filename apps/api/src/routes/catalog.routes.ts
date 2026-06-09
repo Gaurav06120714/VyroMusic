@@ -6,8 +6,6 @@ import { optionalAuth, requireAuth } from '../middleware/auth';
 export async function catalogRoutes(app: FastifyInstance) {
   const catalog = new CatalogService(getDb());
 
-  // ── Tracks ────────────────────────────────────────────────────────────────
-
   app.get('/tracks/trending', async () => {
     return catalog.getTopTracks(20);
   });
@@ -20,7 +18,6 @@ export async function catalogRoutes(app: FastifyInstance) {
     return track;
   });
 
-  // Lyrics — no auth required
   app.get('/tracks/:id/lyrics', async (req, reply) => {
     const { id } = req.params as { id: string };
     const db = getDb();
@@ -43,15 +40,12 @@ export async function catalogRoutes(app: FastifyInstance) {
     };
   });
 
-  // Stream token — returns signed CloudFront URL (or preview URL)
   app.get('/tracks/:id/stream', { preHandler: [optionalAuth] }, async (req, reply) => {
     const { id } = req.params as { id: string };
     const userId = (req.user as { sub: string } | undefined)?.sub;
     const track = await catalog.getTrack(id, userId);
     if (!track) return reply.status(404).send({ error: 'Track not found' });
 
-    // Resolve the best playable URL: prefer HLS manifest for premium users,
-    // fall back to preview_url (plain MP3) for free tier or when no HLS exists.
     const db = getDb();
     const isPremium = userId
       ? (await db.query('SELECT subscription_tier FROM users WHERE id=$1', [userId])).rows[0]?.subscription_tier !== 'free'
@@ -65,14 +59,12 @@ export async function catalogRoutes(app: FastifyInstance) {
 
     return {
       url: streamUrl,
-      manifestUrl: streamUrl, // kept for AudioEngine backward-compat
+      manifestUrl: streamUrl, 
       token: 'preview',
       expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
       previewOnly: !isPremium,
     };
   });
-
-  // ── Albums ────────────────────────────────────────────────────────────────
 
   app.get('/albums/new-releases', async () => {
     return catalog.getNewReleases(20);
@@ -90,8 +82,6 @@ export async function catalogRoutes(app: FastifyInstance) {
     const userId = (req.user as { sub: string } | undefined)?.sub;
     return catalog.getTracksByAlbum(id, userId);
   });
-
-  // ── Artists ───────────────────────────────────────────────────────────────
 
   app.get('/artists/:id', async (req, reply) => {
     const { id } = req.params as { id: string };
