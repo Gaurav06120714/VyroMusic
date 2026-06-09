@@ -1,9 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
 @layer base {
   :root {
     --bg-primary: #050508;
@@ -25,13 +23,10 @@
     --spacing-lg: 24px;
     --spacing-xl: 32px;
   }
-
   * { box-sizing: border-box; }
-
   html {
     scroll-behavior: smooth;
   }
-
   html, body {
     background: var(--bg-primary);
     color: #f8fafc;
@@ -43,13 +38,10 @@
     overflow: hidden;
     height: 100%;
   }
-
   ::selection {
     background: rgba(139, 92, 246, 0.35);
     color: #fff;
   }
-
-  /* Custom scrollbar — thin, dark, rounded */
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
@@ -59,9 +51,7 @@
   }
   ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
 }
-
 @layer components {
-  /* Flat card */
   .glass-card {
     background: #111114;
     border: 1px solid rgba(255,255,255,0.08);
@@ -71,23 +61,16 @@
     background: #16161a;
     border-color: rgba(255,255,255,0.12);
   }
-
   .glass-panel {
     background: #0a0a14;
     border: 1px solid rgba(255,255,255,0.06);
   }
-
-  /* Removed glow effects */
   .glow-purple { }
   .glow-cyan   { }
   .text-glow   { }
-
-  /* Accent text — flat */
   .gradient-text {
     color: #8b5cf6;
   }
-
-  /* Flat accent button */
   .btn-neon {
     @apply relative px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-200;
     background: #8b5cf6;
@@ -97,8 +80,6 @@
     transform: translateY(-1px);
   }
   .btn-neon:active { transform: translateY(0); }
-
-  /* Progress bar */
   .progress-bar {
     @apply relative rounded-full bg-white/10 cursor-pointer overflow-visible;
     height: 3px;
@@ -126,8 +107,6 @@
     pointer-events: none;
     box-shadow: 0 2px 4px rgba(0,0,0,0.4);
   }
-
-  /* Volume slider */
   .volume-slider {
     -webkit-appearance: none;
     appearance: none;
@@ -161,8 +140,6 @@
     background: white;
     cursor: pointer;
   }
-
-  /* Equalizer bars animation */
   .equalizer-bar {
     @apply w-0.5 rounded-full;
     background: var(--neon-purple);
@@ -172,13 +149,9 @@
   .equalizer-bar:nth-child(2) { animation-delay: 0.15s; }
   .equalizer-bar:nth-child(3) { animation-delay: 0.3s; }
   .equalizer-bar:nth-child(4) { animation-delay: 0.45s; }
-
-  /* Page transition */
   .page-transition {
     animation: fadeIn 0.3s ease-out;
   }
-
-  /* Shimmer loading */
   .shimmer {
     @apply relative overflow-hidden bg-white/5 rounded-lg;
   }
@@ -190,8 +163,6 @@
     background-size: 200% 100%;
     animation: shimmer 2s infinite linear;
   }
-
-  /* Flat surface utilities */
   .glass {
     background: #0e0e12;
     border: 1px solid rgba(255,255,255,0.06);
@@ -200,8 +171,6 @@
     background: #131318;
     border: 1px solid rgba(255,255,255,0.10);
   }
-
-  /* Scrollbar hide utility */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -209,8 +178,6 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-
-  /* Animate classes */
   .animate-fadeIn {
     animation: fadeIn 0.3s ease-out both;
   }
@@ -224,49 +191,37 @@
     animation: pulse-glow 2.5s ease-in-out infinite;
   }
 }
-
-/* Flat background */
 .mesh-bg {
   background: #050508;
 }
-
-/* Keyframes */
 @keyframes shimmer {
   from { background-position: -200% 0 }
   to   { background-position:  200% 0 }
 }
-
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px) }
   to   { opacity: 1; transform: translateY(0) }
 }
-
 @keyframes fadeIn {
   from { opacity: 0 }
   to   { opacity: 1 }
 }
-
 @keyframes scaleIn {
   from { opacity: 0; transform: scale(0.95) }
   to   { opacity: 1; transform: scale(1) }
 }
-
 @keyframes pulse-glow {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.7; }
 }
-
 @keyframes equalizer {
   0%   { transform: scaleY(0.3) }
   100% { transform: scaleY(1) }
 }
-
 @keyframes marquee {
   0%   { transform: translateX(0) }
   100% { transform: translateX(-50%) }
 }
-
-/* Stagger children utility */
 .stagger-children > *:nth-child(1) { animation-delay: 0ms }
 .stagger-children > *:nth-child(2) { animation-delay: 50ms }
 .stagger-children > *:nth-child(3) { animation-delay: 100ms }
@@ -275,8 +230,6 @@
 .stagger-children > *:nth-child(6) { animation-delay: 250ms }
 .stagger-children > *:nth-child(7) { animation-delay: 300ms }
 .stagger-children > *:nth-child(8) { animation-delay: 350ms }
-
-/* Accessibility: reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -284,15 +237,11 @@
     animation-iteration-count: 1 !important;
   }
 }
-
-/* Accessibility: focus states */
 :focus-visible {
   outline: 2px solid rgba(139, 92, 246, 0.8);
   outline-offset: 2px;
   border-radius: 4px;
 }
-
-/* Hide scrollbar utility */
 .scrollbar-none {
   scrollbar-width: none;
   -ms-overflow-style: none;
