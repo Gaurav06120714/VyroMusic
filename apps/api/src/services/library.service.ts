@@ -4,8 +4,6 @@ import { v4 as uuid } from 'uuid';
 export class LibraryService {
   constructor(private db: Pool) {}
 
-  // ── Liked Tracks ─────────────────────────────────────────────────────────
-
   async likeTrack(userId: string, trackId: string) {
     await this.db.query(
       `INSERT INTO user_liked_tracks (user_id, track_id) VALUES ($1,$2) ON CONFLICT DO NOTHING`,
@@ -46,8 +44,6 @@ export class LibraryService {
     );
     return result.rows;
   }
-
-  // ── Playlists ─────────────────────────────────────────────────────────────
 
   async getUserPlaylists(userId: string) {
     const result = await this.db.query(
@@ -179,8 +175,6 @@ export class LibraryService {
       },
     }));
   }
-
-  // ── History ───────────────────────────────────────────────────────────────
 
   async addPlayEvent(userId: string, trackId: string, durationPlayedMs: number, skipped: boolean, source: string) {
     await this.db.query(
