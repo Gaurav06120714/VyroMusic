@@ -8,8 +8,6 @@ export async function libraryRoutes(app: FastifyInstance) {
   const library = new LibraryService(getDb());
   const catalog = new CatalogService(getDb());
 
-  // ── Liked tracks ──────────────────────────────────────────────────────────
-
   app.get('/me/library/tracks', { preHandler: [requireAuth] }, async (req) => {
     const { sub: userId } = req.user as { sub: string };
     const { limit = '50', offset = '0' } = req.query as Record<string, string>;
@@ -30,8 +28,6 @@ export async function libraryRoutes(app: FastifyInstance) {
     return reply.status(204).send();
   });
 
-  // ── Playlists ─────────────────────────────────────────────────────────────
-
   app.get('/me/playlists', { preHandler: [requireAuth] }, async (req) => {
     const { sub: userId } = req.user as { sub: string };
     return library.getUserPlaylists(userId);
@@ -44,14 +40,13 @@ export async function libraryRoutes(app: FastifyInstance) {
     return library.createPlaylist(userId, title, description, isPublic);
   });
 
-  // Public featured playlists — no auth required
   app.get('/playlists/featured', async (req, reply) => {
     const { limit = '10' } = req.query as Record<string, string>;
     const playlists = await library.getFeaturedPlaylists(parseInt(limit));
     return playlists;
   });
 
-  app.get('/playlists/:id', { preHandler: [async (req, reply) => { try { await req.jwtVerify(); } catch { /* optional */ } }] }, async (req, reply) => {
+  app.get('/playlists/:id', { preHandler: [async (req, reply) => { try { await req.jwtVerify(); } catch {  } }] }, async (req, reply) => {
     const { id } = req.params as { id: string };
     const userId = (req.user as { sub: string } | undefined)?.sub;
     const playlist = await library.getPlaylist(id, userId);
@@ -91,14 +86,10 @@ export async function libraryRoutes(app: FastifyInstance) {
     return reply.status(204).send();
   });
 
-  // ── History ───────────────────────────────────────────────────────────────
-
   app.get('/me/history', { preHandler: [requireAuth] }, async (req) => {
     const { sub: userId } = req.user as { sub: string };
     return library.getHistory(userId);
   });
-
-  // ── Events ────────────────────────────────────────────────────────────────
 
   app.post('/events/play-end', { preHandler: [requireAuth] }, async (req, reply) => {
     const { sub: userId } = req.user as { sub: string };
