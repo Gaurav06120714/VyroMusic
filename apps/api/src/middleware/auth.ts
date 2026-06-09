@@ -12,6 +12,6 @@ export async function optionalAuth(req: FastifyRequest, _reply: FastifyReply) {
   try {
     await req.jwtVerify();
   } catch {
-    // no-op — route works without auth
+    
   }
 }
