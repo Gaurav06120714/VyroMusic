@@ -3,15 +3,10 @@ import Redis from 'ioredis';
 
 let _client: Redis | null = null;
 
-/**
- * Returns the shared ioredis client singleton.
- * Configured for rate-limiting use: fail fast on errors, no offline queuing.
- */
 export function getRedis(): Redis {
   if (!_client) {
     _client = new Redis(env.REDIS_URL, {
-      // Don't queue commands when Redis is unavailable — fail fast so
-      // slidingWindowCheck() catches the error and fails open.
+      
       enableOfflineQueue: false,
       maxRetriesPerRequest: 1,
       lazyConnect: true,
