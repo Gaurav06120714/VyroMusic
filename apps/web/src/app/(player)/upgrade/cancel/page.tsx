@@ -6,7 +6,7 @@ export default function UpgradeCancelPage() {
   return (
     <div className="min-h-screen bg-[#080809] flex items-center justify-center px-6">
       <div className="text-center max-w-md">
-        {/* Icon */}
+        {}
         <div className="relative inline-flex mb-8">
           <div className="absolute inset-0 rounded-full bg-white/5 blur-2xl scale-150" />
           <div className="relative w-24 h-24 rounded-full bg-white/[0.07] border border-white/10 flex items-center justify-center">
