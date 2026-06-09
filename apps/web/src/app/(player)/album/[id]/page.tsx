@@ -32,9 +32,9 @@ export default async function AlbumPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="pb-8 animate-fadeIn">
-      {/* Hero with blurred background art */}
+      {}
       <div className="relative overflow-hidden">
-        {/* Blurred bg art */}
+        {}
         {album.coverUrl && (
           <div className="absolute inset-0 pointer-events-none">
             <Image
@@ -52,7 +52,7 @@ export default async function AlbumPage({ params }: { params: Promise<{ id: stri
         )}
 
         <div className="relative flex flex-col sm:flex-row items-center sm:items-end gap-5 md:gap-6 p-4 md:p-8 pt-8 md:pt-14">
-          {/* Cover art */}
+          {}
           <div className="relative w-40 h-40 md:w-48 md:h-48 shrink-0 rounded-2xl overflow-hidden shadow-2xl shadow-black/60 ring-1 ring-white/10">
             {album.coverUrl ? (
               <Image src={album.coverUrl} alt={album.title} fill className="object-cover" unoptimized sizes="(max-width: 768px) 160px, 192px" />
@@ -72,7 +72,7 @@ export default async function AlbumPage({ params }: { params: Promise<{ id: stri
         </div>
       </div>
 
-      {/* Client component handles playback interactions */}
+      {}
       <AlbumTrackList tracks={tracks} albumArtist={album.artist?.name} />
     </div>
   );
