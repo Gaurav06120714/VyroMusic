@@ -1,10 +1,9 @@
 import { env } from '../config/env.js';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+
 const StripeLib = require('stripe');
 import type { Stripe as StripeType } from '../../../../node_modules/stripe/cjs/stripe.core';
 
-// ── Plans ─────────────────────────────────────────────────────────────────────
 const PLANS = [
   { id: 'free', name: 'Free', price: 0, features: ['Ad-supported', '320kbps', 'Limited skips'] },
   {
@@ -32,7 +31,6 @@ const PLANS = [
 
 type PlanId = 'free' | 'premium' | 'family' | 'student';
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 function getStripe(): StripeType | null {
   if (!env.STRIPE_SECRET_KEY) return null;
   return new StripeLib(env.STRIPE_SECRET_KEY, { apiVersion: '2026-04-22.dahlia' }) as StripeType;
@@ -48,14 +46,11 @@ function requireAuth(app: FastifyInstance) {
   };
 }
 
-// ── Route registration ────────────────────────────────────────────────────────
 export async function billingRoutes(app: FastifyInstance) {
   const db = (await import('../db/client')).getDb();
 
-  // ── GET /billing/plans ────────────────────────────────────────────────────
   app.get('/billing/plans', async () => ({ plans: PLANS }));
 
-  // ── POST /billing/create-checkout-session ─────────────────────────────────
   app.post(
     '/billing/create-checkout-session',
     { preHandler: [requireAuth(app)] },
@@ -112,7 +107,6 @@ export async function billingRoutes(app: FastifyInstance) {
     },
   );
 
-  // ── POST /billing/create-portal-session ──────────────────────────────────
   app.post(
     '/billing/create-portal-session',
     { preHandler: [requireAuth(app)] },
@@ -148,8 +142,6 @@ export async function billingRoutes(app: FastifyInstance) {
     },
   );
 
-  // ── POST /billing/webhook ─────────────────────────────────────────────────
-  // Stripe requires the raw body to verify signatures.
   app.addContentTypeParser(
     'application/json',
     { parseAs: 'buffer' },
@@ -177,7 +169,7 @@ export async function billingRoutes(app: FastifyInstance) {
     }
 
     try {
-      // Log the raw event first
+      
       await db.query(
         `INSERT INTO subscription_events (stripe_event_id, event_type, data)
          VALUES ($1, $2, $3)
@@ -218,7 +210,6 @@ export async function billingRoutes(app: FastifyInstance) {
             ],
           );
 
-          // Annotate log entry with user_id
           await db.query(
             'UPDATE subscription_events SET user_id = $1 WHERE stripe_event_id = $2',
             [userId, event.id],
@@ -285,7 +276,7 @@ export async function billingRoutes(app: FastifyInstance) {
       }
     } catch (err) {
       app.log.error({ err, eventType: event.type }, 'Webhook handler error');
-      // Return 200 so Stripe does not retry — failure is logged
+      
     }
 
     return reply.status(200).send({ received: true });
