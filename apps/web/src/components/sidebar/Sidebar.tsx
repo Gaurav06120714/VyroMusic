@@ -51,8 +51,8 @@ export function Sidebar() {
 
   return (
     <aside className="hidden md:flex w-[260px] shrink-0 flex-col bg-[#07070b] border-r border-white/[0.05] h-full">
-      {/* Logo */}
-      <div className="px-5 py-5 flex items-center gap-2.5 shrink-0">
+      {}
+      <Link href="/" className="px-5 py-5 flex items-center gap-2.5 shrink-0">
         <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-vyro-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-vyro-500/40 animate-pulse-glow">
           <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
             <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
@@ -60,9 +60,9 @@ export function Sidebar() {
         </div>
         <span className="font-extrabold text-xl tracking-tight gradient-text">vyro</span>
         <span className="text-white/25 text-xs font-medium mt-0.5">music</span>
-      </div>
+      </Link>
 
-      {/* Main nav */}
+      {}
       <nav className="px-3 py-1 space-y-0.5 shrink-0">
         {NAV.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
@@ -82,7 +82,7 @@ export function Sidebar() {
           );
         })}
 
-        {/* Radio from current track */}
+        {}
         {currentTrack && (
           <button
             onClick={() => startRadio(currentTrack)}
@@ -94,9 +94,9 @@ export function Sidebar() {
         )}
       </nav>
 
-      {/* Scrollable middle */}
+      {}
       <div className="flex-1 overflow-y-auto px-3 py-2 mt-2 min-h-0">
-        {/* Playlists header */}
+        {}
         <button
           onClick={() => setPlaylistsOpen(v => !v)}
           className="flex items-center justify-between w-full px-3 py-1.5 mb-1 group"
@@ -154,7 +154,7 @@ export function Sidebar() {
           </>
         )}
 
-        {/* Vyro Special */}
+        {}
         <div className="px-3 pt-5 pb-1.5">
           <p className="text-[11px] text-white/25 uppercase tracking-widest font-semibold">Vyro Special</p>
         </div>
@@ -172,7 +172,7 @@ export function Sidebar() {
           <span className="truncate font-medium">51 Special Songs</span>
         </Link>
 
-        {/* Followed artists */}
+        {}
         {followedArtists.length > 0 && (
           <>
             <div className="px-3 pt-5 pb-1.5">
@@ -198,7 +198,7 @@ export function Sidebar() {
         )}
       </div>
 
-      {/* Upgrade CTA */}
+      {}
       {user && user.subscriptionTier === 'free' && (
         <div className="px-3 pb-2 shrink-0">
           <Link
@@ -216,7 +216,7 @@ export function Sidebar() {
         </div>
       )}
 
-      {/* User section */}
+      {}
       <div className="p-3 border-t border-white/[0.05] shrink-0">
         {user ? (
           <Link
