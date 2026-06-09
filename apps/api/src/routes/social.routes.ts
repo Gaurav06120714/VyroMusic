@@ -2,16 +2,9 @@ import { FastifyInstance } from 'fastify';
 import { getDb } from '../db/client';
 import { requireAuth } from '../middleware/auth';
 
-/**
- * Social routes — Phase 2
- * Artist following, user profile, follower counts
- */
 export async function socialRoutes(app: FastifyInstance) {
   const db = getDb();
 
-  // ── Artist Follow / Unfollow ───────────────────────────────────────────────
-
-  /** Follow an artist */
   app.post('/artists/:id/follow', { preHandler: [requireAuth] }, async (req, reply) => {
     const { sub: userId } = req.user as { sub: string };
     const { id: artistId } = req.params as { id: string };
@@ -27,7 +20,6 @@ export async function socialRoutes(app: FastifyInstance) {
     return reply.status(204).send();
   });
 
-  /** Unfollow an artist */
   app.delete('/artists/:id/follow', { preHandler: [requireAuth] }, async (req, reply) => {
     const { sub: userId } = req.user as { sub: string };
     const { id: artistId } = req.params as { id: string };
@@ -45,7 +37,6 @@ export async function socialRoutes(app: FastifyInstance) {
     return reply.status(204).send();
   });
 
-  /** Get followed artists for current user */
   app.get('/me/following/artists', { preHandler: [requireAuth] }, async (req) => {
     const { sub: userId } = req.user as { sub: string };
     const result = await db.query(
@@ -69,7 +60,6 @@ export async function socialRoutes(app: FastifyInstance) {
     }));
   });
 
-  /** Check if current user follows an artist */
   app.get('/artists/:id/follow', { preHandler: [requireAuth] }, async (req) => {
     const { sub: userId } = req.user as { sub: string };
     const { id: artistId } = req.params as { id: string };
@@ -80,9 +70,6 @@ export async function socialRoutes(app: FastifyInstance) {
     return { following: (result.rowCount ?? 0) > 0 };
   });
 
-  // ── User Profile ──────────────────────────────────────────────────────────
-
-  /** Get current user's full profile */
   app.get('/me/profile', { preHandler: [requireAuth] }, async (req) => {
     const { sub: userId } = req.user as { sub: string };
     const result = await db.query(
@@ -121,7 +108,6 @@ export async function socialRoutes(app: FastifyInstance) {
     };
   });
 
-  /** Update current user's profile */
   app.put('/me/profile', { preHandler: [requireAuth] }, async (req) => {
     const { sub: userId } = req.user as { sub: string };
     const { username, bio, country, avatarUrl } = req.body as {
@@ -141,9 +127,6 @@ export async function socialRoutes(app: FastifyInstance) {
     return result.rows[0];
   });
 
-  // ── Listening Stats ───────────────────────────────────────────────────────
-
-  /** Top listened genres for current user */
   app.get('/me/stats/genres', { preHandler: [requireAuth] }, async (req) => {
     const { sub: userId } = req.user as { sub: string };
     const result = await db.query(
@@ -161,7 +144,6 @@ export async function socialRoutes(app: FastifyInstance) {
     return result.rows.map(r => ({ genre: r.genre, plays: parseInt(r.plays) }));
   });
 
-  /** Top artists for current user */
   app.get('/me/stats/artists', { preHandler: [requireAuth] }, async (req) => {
     const { sub: userId } = req.user as { sub: string };
     const result = await db.query(
