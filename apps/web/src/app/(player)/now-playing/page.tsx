@@ -95,7 +95,7 @@ export default function NowPlayingPage() {
         paddingBottom: 'max(env(safe-area-inset-bottom), 24px)',
       }}
     >
-      {/* Top bar */}
+      {}
       <div className="flex items-center justify-between mb-8">
         <motion.button
           whileTap={{ scale: 0.85 }}
@@ -120,7 +120,7 @@ export default function NowPlayingPage() {
         </motion.button>
       </div>
 
-      {/* Album art */}
+      {}
       <div className="flex justify-center mb-8">
         <motion.div
           key={currentTrack.id}
@@ -144,7 +144,7 @@ export default function NowPlayingPage() {
         </motion.div>
       </div>
 
-      {/* Track info + like */}
+      {}
       <div className="flex items-center gap-3 mb-6">
         <div className="flex-1 min-w-0">
           <h1 className="text-2xl font-bold text-white truncate leading-tight">
@@ -166,7 +166,7 @@ export default function NowPlayingPage() {
         )}
       </div>
 
-      {/* Progress bar */}
+      {}
       <div className="mb-5">
         <div
           className="relative h-2 bg-white/10 rounded-full cursor-pointer group"
@@ -192,9 +192,9 @@ export default function NowPlayingPage() {
         </div>
       </div>
 
-      {/* Transport controls */}
+      {}
       <div className="flex items-center justify-between mb-6">
-        {/* Shuffle */}
+        {}
         <motion.button
           whileTap={{ scale: 0.85 }}
           onClick={toggleShuffle}
@@ -206,7 +206,7 @@ export default function NowPlayingPage() {
           </svg>
         </motion.button>
 
-        {/* Prev */}
+        {}
         <motion.button
           whileTap={{ scale: 0.85 }}
           onClick={prev}
@@ -218,7 +218,7 @@ export default function NowPlayingPage() {
           </svg>
         </motion.button>
 
-        {/* Play/Pause */}
+        {}
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={togglePlay}
@@ -236,7 +236,7 @@ export default function NowPlayingPage() {
           )}
         </motion.button>
 
-        {/* Next */}
+        {}
         <motion.button
           whileTap={{ scale: 0.85 }}
           onClick={next}
@@ -248,7 +248,7 @@ export default function NowPlayingPage() {
           </svg>
         </motion.button>
 
-        {/* Repeat */}
+        {}
         <motion.button
           whileTap={{ scale: 0.85 }}
           onClick={cycleRepeat}
@@ -264,7 +264,7 @@ export default function NowPlayingPage() {
         </motion.button>
       </div>
 
-      {/* Volume */}
+      {}
       <div className="flex items-center gap-3 mb-8">
         <button
           onClick={toggleMute}
@@ -298,7 +298,7 @@ export default function NowPlayingPage() {
         </div>
       </div>
 
-      {/* Lyrics + Queue buttons */}
+      {}
       <div className="flex gap-3">
         <button
           onClick={toggleLyrics}
