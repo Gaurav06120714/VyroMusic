@@ -1,10 +1,8 @@
-// iTunes API service — no auth needed
 const ITUNES_BASE = 'https://itunes.apple.com';
 const APPLE_RSS = 'https://rss.applemarketingtools.com/api/v2/us/music';
 
 const FETCH_TIMEOUT_MS = 5000;
 
-// ── Raw iTunes API shape ──────────────────────────────────────────────────────
 export interface ItunesTrack {
   trackId: number;
   trackName: string;
@@ -19,24 +17,22 @@ export interface ItunesTrack {
   artistId: number;
 }
 
-// ── Normalised shape used by routes / frontend ────────────────────────────────
 export interface NormalizedTrack {
-  id: string;          // "itunes_" + trackId
+  id: string;          
   title: string;
   artistName: string;
   albumTitle: string;
   durationMs: number;
   previewUrl: string;
-  coverUrl: string;    // 600x600 artwork
+  coverUrl: string;    
   genre: string;
   releaseDate: string;
   source: 'itunes';
 }
 
-// ── In-memory cache ───────────────────────────────────────────────────────────
 interface CacheEntry<T> { data: T; expiresAt: number }
 const cache = new Map<string, CacheEntry<NormalizedTrack[]>>();
-const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+const CACHE_TTL_MS = 60 * 60 * 1000; 
 
 function fromCache(key: string): NormalizedTrack[] | null {
   const entry = cache.get(key);
@@ -49,7 +45,6 @@ function toCache(key: string, data: NormalizedTrack[]) {
   cache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
 }
 
-// ── Helper: fetch with timeout ────────────────────────────────────────────────
 async function fetchWithTimeout(url: string): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -60,12 +55,10 @@ async function fetchWithTimeout(url: string): Promise<Response> {
   }
 }
 
-// ── Artwork URL helper ────────────────────────────────────────────────────────
 function hdArtwork(url: string): string {
   return url.replace('100x100bb', '600x600bb').replace('100x100', '600x600');
 }
 
-// ── Service class ─────────────────────────────────────────────────────────────
 export class ItunesService {
   normalize(t: ItunesTrack): NormalizedTrack {
     return {
@@ -82,7 +75,6 @@ export class ItunesService {
     };
   }
 
-  // Search iTunes — returns up to 200 results
   async search(query: string, limit = 50): Promise<NormalizedTrack[]> {
     const url = `${ITUNES_BASE}/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=${Math.min(limit, 200)}`;
     const res = await fetchWithTimeout(url);
@@ -91,7 +83,6 @@ export class ItunesService {
     return json.results.filter(t => t.previewUrl).map(t => this.normalize(t));
   }
 
-  // Top 100 songs chart (cached 1 hour)
   async trending(limit = 100): Promise<NormalizedTrack[]> {
     const cacheKey = `trending_${limit}`;
     const cached = fromCache(cacheKey);
@@ -104,7 +95,6 @@ export class ItunesService {
     const entries = rss.feed?.results ?? [];
     if (!entries.length) return [];
 
-    // Chunk into batches of 50 for the lookup endpoint
     const ids = entries.map((e) => e.id);
     const tracks = await this._lookupIds(ids);
     const result = tracks.slice(0, limit);
@@ -112,7 +102,6 @@ export class ItunesService {
     return result;
   }
 
-  // New releases feed (cached 1 hour)
   async newReleases(limit = 50): Promise<NormalizedTrack[]> {
     const cacheKey = `new_releases_${limit}`;
     const cached = fromCache(cacheKey);
@@ -132,7 +121,6 @@ export class ItunesService {
     return result;
   }
 
-  // Get a single track by iTunes ID
   async getTrack(itunesId: string): Promise<NormalizedTrack | null> {
     const url = `${ITUNES_BASE}/lookup?id=${itunesId}`;
     const res = await fetchWithTimeout(url);
@@ -143,7 +131,6 @@ export class ItunesService {
     return this.normalize(track);
   }
 
-  // ── Private: lookup multiple IDs in batches of 50 ────────────────────────
   private async _lookupIds(ids: string[]): Promise<NormalizedTrack[]> {
     const BATCH = 50;
     const tracks: NormalizedTrack[] = [];
@@ -157,7 +144,7 @@ export class ItunesService {
         const batch = json.results.filter(t => t.previewUrl && t.trackId).map(t => this.normalize(t));
         tracks.push(...batch);
       } catch {
-        // skip failed batch
+        
       }
     }
     return tracks;
