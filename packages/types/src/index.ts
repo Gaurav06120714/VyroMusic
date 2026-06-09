@@ -1,4 +1,3 @@
-// ─── User ────────────────────────────────────────────────────────────────────
 export type SubscriptionTier = 'free' | 'premium' | 'family' | 'student';
 
 export interface User {
@@ -11,7 +10,6 @@ export interface User {
   createdAt: string;
 }
 
-// ─── Artist ──────────────────────────────────────────────────────────────────
 export interface Artist {
   id: string;
   name: string;
@@ -25,7 +23,6 @@ export interface Artist {
   country: string | null;
 }
 
-// ─── Album ───────────────────────────────────────────────────────────────────
 export type AlbumType = 'album' | 'single' | 'ep' | 'compilation';
 
 export interface Album {
@@ -40,7 +37,6 @@ export interface Album {
   label: string | null;
 }
 
-// ─── Track ───────────────────────────────────────────────────────────────────
 export type TrackStatus = 'processing' | 'active' | 'takedown';
 
 export interface Track {
@@ -65,7 +61,6 @@ export interface Track {
   liked?: boolean;
 }
 
-// ─── Playlist ─────────────────────────────────────────────────────────────────
 export interface Playlist {
   id: string;
   userId: string;
@@ -80,7 +75,6 @@ export interface Playlist {
   tracks?: Track[];
 }
 
-// ─── Lyrics ──────────────────────────────────────────────────────────────────
 export interface LyricLine {
   timeMs: number;
   text: string;
@@ -93,13 +87,11 @@ export interface Lyrics {
   language: string | null;
 }
 
-/** Parsed single line used internally by LyricsPanel (ms alias for convenience). */
 export interface ParsedLyricLine {
   ms: number;
   text: string;
 }
 
-// ─── Search ──────────────────────────────────────────────────────────────────
 export interface SearchResults {
   tracks: Track[];
   albums: Album[];
@@ -108,7 +100,6 @@ export interface SearchResults {
   total: number;
 }
 
-// ─── API Responses ───────────────────────────────────────────────────────────
 export interface ApiResponse<T> {
   data: T;
   message?: string;
@@ -127,7 +118,6 @@ export interface StreamToken {
   previewOnly: boolean;
 }
 
-// ─── Auth ────────────────────────────────────────────────────────────────────
 export interface AuthTokens {
   accessToken: string;
   user: User;
@@ -144,7 +134,6 @@ export interface RegisterPayload {
   password: string;
 }
 
-// ─── Play Event ──────────────────────────────────────────────────────────────
 export type PlaySource = 'album' | 'playlist' | 'search' | 'radio' | 'recommendation' | 'direct';
 
 export interface PlayEndPayload {
