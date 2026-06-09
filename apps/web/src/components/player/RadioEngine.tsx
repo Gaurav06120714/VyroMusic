@@ -1,11 +1,5 @@
 'use client';
-/**
- * RadioEngine — Phase 2
- *
- * A zero-UI component that lives inside the player layout.
- * When playMode === 'radio' and fewer than 5 tracks remain in the queue,
- * it silently fetches the next radio batch from the API and appends them.
- */
+
 import { useEffect, useRef } from 'react';
 import { usePlayerStore } from '@/store/player.store';
 import { api } from '@/lib/api';
@@ -35,5 +29,5 @@ export function RadioEngine() {
       .finally(() => { loading.current = false; });
   }, [playMode, radioSeedId, queue.length, queueIndex, appendToQueue, setRadioLoaded]);
 
-  return null; // no UI — pure side-effect component
+  return null; 
 }
