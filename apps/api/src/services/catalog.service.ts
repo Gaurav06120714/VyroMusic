@@ -3,8 +3,6 @@ import { Pool } from 'pg';
 export class CatalogService {
   constructor(private db: Pool) {}
 
-  // ── Tracks ────────────────────────────────────────────────────────────────
-
   async getTrack(id: string, userId?: string) {
     const result = await this.db.query(
       `SELECT t.*,
@@ -64,8 +62,6 @@ export class CatalogService {
     return result.rows.map(this.mapAlbum);
   }
 
-  // ── Albums ────────────────────────────────────────────────────────────────
-
   async getAlbum(id: string) {
     const result = await this.db.query(
       `SELECT al.*, a.name as artist_name, a.avatar_url as artist_avatar, a.verified as artist_verified
@@ -88,8 +84,6 @@ export class CatalogService {
     );
     return result.rows.map(this.mapAlbum);
   }
-
-  // ── Artists ───────────────────────────────────────────────────────────────
 
   async getArtist(id: string) {
     const result = await this.db.query(
@@ -122,8 +116,6 @@ export class CatalogService {
       [trackId]
     );
   }
-
-  // ── Mappers ───────────────────────────────────────────────────────────────
 
   private mapTrack(row: Record<string, unknown>) {
     return {
