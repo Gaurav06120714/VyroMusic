@@ -91,16 +91,16 @@ export default function UpgradePage() {
 
   return (
     <div className="min-h-screen bg-[#080809] px-6 py-12">
-      {/* Hero */}
+      {}
       <div className="text-center mb-10 max-w-2xl mx-auto">
         <h1 className="text-5xl font-bold mb-4 text-white">Upgrade your plan</h1>
         <p className="text-white/50 text-lg">No ads, better audio quality, and unlimited skips.</p>
       </div>
 
-      {/* Proof panel — audio quality comparison */}
+      {}
       <div className="max-w-3xl mx-auto mb-14">
         <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] overflow-hidden">
-          {/* Now playing bar */}
+          {}
           <div className="flex items-center gap-4 px-6 py-4 border-b border-white/[0.06] bg-white/[0.02]">
             <div className="w-10 h-10 rounded-lg bg-vyro-500/20 flex items-center justify-center shrink-0">
               <Music className="w-5 h-5 text-vyro-400" />
@@ -114,7 +114,7 @@ export default function UpgradePage() {
               <div className="text-[11px] text-white/30 font-mono">2:47 / 3:22</div>
             </div>
           </div>
-          {/* Waveform bars */}
+          {}
           <div className="px-6 py-4 border-b border-white/[0.06]">
             <div className="flex items-center gap-[2px] h-10">
               {[6,10,14,9,16,20,12,18,24,15,10,22,18,28,16,12,20,26,14,10,18,24,16,20,28,12,16,22,18,14,26,20,16,28,18,12,24,16,20,14,10,18,22,16,24,20,14,18,26,12,20,16,24,18,14,22,28,16,20,12,18,24,16,20,14,28,10,12,8,6,8,10,6,8,6,4,6,8,4,6].map((h, i) => (
@@ -122,7 +122,7 @@ export default function UpgradePage() {
               ))}
             </div>
           </div>
-          {/* Quality comparison */}
+          {}
           <div className="grid grid-cols-3 divide-x divide-white/[0.06]">
             {[
               { tier: 'Free', bitrate: '128 kbps', format: 'AAC', desc: 'Good for background listening' },
@@ -140,14 +140,14 @@ export default function UpgradePage() {
         </div>
       </div>
 
-      {/* Error */}
+      {}
       {error && (
         <div className="max-w-md mx-auto mb-8 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
           {error}
         </div>
       )}
 
-      {/* Plan cards */}
+      {}
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
         {paidPlans.map(plan => {
           const isActive = currentTier === plan.id;
@@ -227,7 +227,7 @@ export default function UpgradePage() {
         })}
       </div>
 
-      {/* Free tier note */}
+      {}
       <div className="max-w-5xl mx-auto mt-6">
         <div className="flex items-center gap-4 px-6 py-4 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
           <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white/50 shrink-0">
@@ -245,7 +245,7 @@ export default function UpgradePage() {
         </div>
       </div>
 
-      {/* Manage subscription */}
+      {}
       {hasActivePaid && (
         <div className="max-w-5xl mx-auto mt-8 text-center">
           <button
