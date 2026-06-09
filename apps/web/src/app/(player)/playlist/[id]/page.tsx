@@ -57,11 +57,11 @@ export default function PlaylistPage() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      {/* Hero */}
+      {}
       <div className="relative px-8 pt-10 pb-8">
         <div className="absolute inset-0 bg-gradient-to-b from-vyro-900/40 to-transparent pointer-events-none" />
         <div className="relative flex items-end gap-6">
-          {/* Cover art */}
+          {}
           <div className="w-48 h-48 shrink-0 rounded-2xl bg-gradient-to-br from-vyro-500/30 to-cyan-500/30 border border-white/10 flex items-center justify-center shadow-2xl">
             <Music className="w-16 h-16 text-vyro-400/60" />
           </div>
@@ -78,7 +78,7 @@ export default function PlaylistPage() {
           </div>
         </div>
 
-        {/* Controls */}
+        {}
         <div className="relative flex items-center gap-4 mt-6">
           <button
             onClick={() => playAll(false)}
@@ -97,7 +97,7 @@ export default function PlaylistPage() {
         </div>
       </div>
 
-      {/* Track list */}
+      {}
       {playlist.tracks.length === 0 ? (
         <div className="px-8 py-12 text-center text-white/30">
           <Music className="w-12 h-12 mx-auto mb-3 opacity-30" />
@@ -105,7 +105,7 @@ export default function PlaylistPage() {
         </div>
       ) : (
         <div className="px-8 pb-8">
-          {/* Header row */}
+          {}
           <div className="grid grid-cols-[2rem_1fr_1fr_5rem] gap-4 px-4 mb-2 text-xs font-medium text-white/30 uppercase tracking-widest">
             <span>#</span>
             <span>Title</span>
