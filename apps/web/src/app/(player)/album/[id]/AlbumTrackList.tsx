@@ -21,7 +21,7 @@ export function AlbumTrackList({ tracks }: Props) {
 
   return (
     <div className="px-4 md:px-8 mt-2">
-      {/* Play controls */}
+      {}
       <div className="flex items-center gap-3 px-2 mb-6">
         <button
           onClick={() => playAll(false)}
@@ -37,7 +37,7 @@ export function AlbumTrackList({ tracks }: Props) {
         </button>
       </div>
 
-      {/* Column headers */}
+      {}
       <div className="flex items-center gap-3 px-3 mb-1 text-[11px] font-semibold text-white/25 uppercase tracking-wider">
         <span className="w-7 text-center">#</span>
         <span className="w-10 shrink-0" />
@@ -46,7 +46,7 @@ export function AlbumTrackList({ tracks }: Props) {
       </div>
       <div className="h-px bg-white/[0.06] mb-2" />
 
-      {/* Track list */}
+      {}
       <div className="space-y-0.5">
         {tracks.map((track, i) => (
           <TrackRow
