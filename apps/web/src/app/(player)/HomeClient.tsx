@@ -1,15 +1,5 @@
 'use client';
-/**
- * HomeClient — Phase 2 personalised home page
- *
- * Sections (auth-aware):
- *  • Greeting + time of day
- *  • For You (personalised) OR Trending (guest)
- *  • New Releases (album grid)
- *  • Discover Something New (genre-diverse, auth only)
- *  • iTunes Top Charts (live from Apple)
- *  • iTunes New Releases (live from Apple)
- */
+
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -165,7 +155,7 @@ export function HomeClient() {
           ]);
           setForYou(fyData);
           setDiscover(discoverData);
-          // Map snake_case history rows to Track shape
+          
           setHistory((historyData as Record<string, unknown>[]).slice(0, 10).map((row) => ({
             id: row.id as string,
             albumId: row.album_id as string,
@@ -219,9 +209,9 @@ export function HomeClient() {
   return (
     <div className="overflow-y-auto px-4 md:px-7 py-5 md:py-7 space-y-8 md:space-y-10 pb-8 animate-fadeIn">
 
-      {/* Vyro Special Songs — featured banner (always visible, no login needed) */}
+      {}
       <section className="animate-slideUp" style={{ animationDelay: '0ms' }}>
-        {/* Banner */}
+        {}
         <div className="relative rounded-2xl overflow-hidden mb-5"
           style={{ background: 'linear-gradient(135deg, #6d28d9 0%, #0e7490 100%)' }}>
           <div className="absolute inset-0 opacity-20"
@@ -255,7 +245,7 @@ export function HomeClient() {
           </div>
         </div>
 
-        {/* Horizontal scroll of tracks */}
+        {}
         {vyroLoading ? <HorizontalCardSkeleton /> : (
           <div className="flex gap-4 overflow-x-auto pb-3 -mx-1 px-1 snap-x snap-mandatory">
             {vyroTracks.map((track) => (
@@ -288,7 +278,7 @@ export function HomeClient() {
         )}
       </section>
 
-      {/* Greeting */}
+      {}
       <div className="animate-slideUp">
         <h1 className="text-2xl md:text-3xl font-bold text-white">
           {user ? (
@@ -302,7 +292,7 @@ export function HomeClient() {
         </p>
       </div>
 
-      {/* Continue Listening — logged in only, mobile-prominent */}
+      {}
       {user && history.length > 0 && (
         <section className="animate-slideUp" style={{ animationDelay: '30ms' }}>
           <SectionHeader
@@ -339,7 +329,7 @@ export function HomeClient() {
         </section>
       )}
 
-      {/* For You / Trending tracks */}
+      {}
       <section className="animate-slideUp" style={{ animationDelay: '60ms' }}>
         <SectionHeader
           icon={user ? <Sparkles className="w-5 h-5" /> : <TrendingUp className="w-5 h-5" />}
@@ -361,7 +351,7 @@ export function HomeClient() {
         )}
       </section>
 
-      {/* New Releases */}
+      {}
       {(loading || newReleases.length > 0) && (
         <section className="animate-slideUp" style={{ animationDelay: '120ms' }}>
           <SectionHeader
@@ -378,7 +368,7 @@ export function HomeClient() {
         </section>
       )}
 
-      {/* Discover Something New (auth only) */}
+      {}
       {user && (loading || discover.length > 0) && (
         <section className="animate-slideUp" style={{ animationDelay: '180ms' }}>
           <SectionHeader
@@ -402,7 +392,7 @@ export function HomeClient() {
         </section>
       )}
 
-      {/* iTunes Top Charts */}
+      {}
       {(loading || itunesCharts.length > 0) && (
         <section className="animate-slideUp" style={{ animationDelay: '240ms' }}>
           <SectionHeader
@@ -445,7 +435,7 @@ export function HomeClient() {
         </section>
       )}
 
-      {/* iTunes New Releases */}
+      {}
       {(loading || itunesNew.length > 0) && (
         <section className="animate-slideUp" style={{ animationDelay: '300ms' }}>
           <SectionHeader
