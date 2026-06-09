@@ -51,7 +51,7 @@ export function MobileNav() {
                 boxShadow: '0 0 12px 2px rgba(139,92,246,0.25)',
               } : undefined}
             >
-              {/* Profile tab: show avatar circle when logged in */}
+              {}
               {isProfile && user ? (
                 <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 ${
                   active
