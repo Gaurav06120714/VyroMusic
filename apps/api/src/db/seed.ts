@@ -2,8 +2,6 @@ import 'dotenv/config';
 import { getDb } from './client';
 import { v4 as uuid } from 'uuid';
 
-// Cover art from MusicBrainz CAA (real album art, CC-licensed proxied via coverartarchive.org)
-// Preview audio: Wikimedia Commons / public domain short clips
 const artists = [
   {
     name: 'The Weeknd',
@@ -57,7 +55,6 @@ const artists = [
   },
 ];
 
-// Cycling through 17 SoundHelix public-domain MP3s
 const PREVIEW_URLS = [
   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
@@ -195,8 +192,6 @@ async function seed() {
   }
   console.log('✅ Albums & tracks seeded');
 
-  // ── Lyrics (LRC-style synced lyrics for select tracks) ───────────────────
-  // Fetch track IDs by title so we can attach lyrics
   const lyricsData: Array<{
     title: string;
     language: string;
@@ -330,8 +325,6 @@ async function seed() {
   }
   console.log('✅ Lyrics seeded');
 
-  // ── Genre-tagged tracks (for recommendation engine) ──────────────────────
-  // Tag tracks with genres matching their artist
   await db.query(`
     UPDATE tracks t
     SET genres = (
