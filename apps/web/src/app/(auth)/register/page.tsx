@@ -28,7 +28,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style={{ background: '#050508' }}>
-      {/* Animated mesh gradient background */}
+      {}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-20 blur-3xl animate-pulse-slow" style={{ background: 'radial-gradient(circle, #8b5cf6, transparent)' }} />
         <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-15 blur-3xl animate-pulse-slow" style={{ background: 'radial-gradient(circle, #06b6d4, transparent)', animationDelay: '1.2s' }} />
@@ -36,7 +36,7 @@ export default function RegisterPage() {
 
       <div className="w-full max-w-md relative z-10 animate-scaleIn">
         <div className="glass-strong rounded-2xl p-8">
-          {/* Logo */}
+          {}
           <div className="flex items-center gap-2.5 justify-center mb-8">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-vyro-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-vyro-500/30 animate-pulse-glow">
               <Music className="w-5 h-5 text-white" />
