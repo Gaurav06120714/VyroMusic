@@ -1,24 +1,8 @@
 import { Pool } from 'pg';
 
-/**
- * RecommendationService — Phase 2 AI layer
- *
- * Strategy (no external ML needed):
- *  1. Inspect user's play history → extract top genres + top artists
- *  2. Score every active track by overlap with those genres/artists,
- *     weighted by recency and how much of the song they actually played
- *  3. Exclude recently played tracks (last 24h) to keep it fresh
- *  4. Cold-start (no history): fall back to global trending
- *
- * Future: swap scoring with a real embedding model (e.g. OpenAI text-embedding
- * or a locally hosted FAISS index) while keeping the same interface.
- */
 export class RecommendationService {
   constructor(private db: Pool) {}
 
-  // ── Public API ────────────────────────────────────────────────────────────
-
-  /** Personalised "For You" feed */
   async forYou(userId: string, limit = 20): Promise<string[]> {
     const profile = await this.buildUserProfile(userId);
     if (!profile.topGenres.length && !profile.topArtistIds.length) {
@@ -27,9 +11,8 @@ export class RecommendationService {
     return this.scoreAndRank(userId, profile, limit, 'for_you');
   }
 
-  /** Radio: given a seed track, find acoustically/genre-similar tracks */
   async radio(seedTrackId: string, limit = 30, excludeIds: string[] = []): Promise<string[]> {
-    // Fetch seed track genres + artist
+    
     const seed = await this.db.query(
       `SELECT genres, artist_id FROM tracks WHERE id = $1`,
       [seedTrackId]
@@ -59,7 +42,6 @@ export class RecommendationService {
     return result.rows.map((r: { id: string }) => r.id);
   }
 
-  /** "Discover Weekly"-style: genres user hasn't explored much */
   async discover(userId: string, limit = 20): Promise<string[]> {
     const profile = await this.buildUserProfile(userId);
     const knownGenres = profile.topGenres.slice(0, 3);
@@ -82,14 +64,12 @@ export class RecommendationService {
       [userId, knownGenres, limit]
     );
 
-    // If not enough fresh results, pad with popular unknowns
     if (result.rows.length < limit / 2) {
       return this.trending(limit);
     }
     return result.rows.map((r: { id: string }) => r.id);
   }
 
-  /** Guest / anonymous trending */
   async trending(limit = 20): Promise<string[]> {
     const result = await this.db.query(
       `SELECT id FROM tracks WHERE status = 'active'
@@ -99,8 +79,6 @@ export class RecommendationService {
     return result.rows.map((r: { id: string }) => r.id);
   }
 
-  // ── Cache helpers ─────────────────────────────────────────────────────────
-
   async getCached(userId: string, context: string): Promise<string[] | null> {
     const result = await this.db.query(
       `SELECT track_ids, generated_at FROM recommendation_cache
@@ -109,7 +87,7 @@ export class RecommendationService {
     );
     if (!result.rows[0]) return null;
     const age = Date.now() - new Date(result.rows[0].generated_at as string).getTime();
-    if (age > 60 * 60 * 1000) return null; // stale after 1h
+    if (age > 60 * 60 * 1000) return null; 
     return result.rows[0].track_ids as string[];
   }
 
@@ -125,10 +103,8 @@ export class RecommendationService {
     );
   }
 
-  // ── Private helpers ───────────────────────────────────────────────────────
-
   private async buildUserProfile(userId: string) {
-    // Top genres from last 60 plays (weighted by listen completion %)
+    
     const genreRows = await this.db.query(
       `SELECT unnest(t.genres) as genre, COUNT(*) as cnt
        FROM play_history ph
