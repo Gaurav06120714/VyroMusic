@@ -1,8 +1,3 @@
-// API client — all requests go through Next.js rewrite proxy (/api/*)
-// Usage:
-//   api('/api/tracks/trending')           → GET
-//   api('/api/me/playlists', { method: 'POST', body: ... })  → POST
-
 const BASE = '';
 
 let accessToken: string | null = null;
@@ -25,7 +20,6 @@ async function request<T = unknown>(path: string, options: RequestInit = {}): Pr
     credentials: 'include',
   });
 
-  // Auto-refresh on 401
   if (res.status === 401 && !path.includes('/auth/refresh')) {
     const refreshed = await fetch('/api/auth/refresh', { method: 'POST', credentials: 'include' });
     if (refreshed.ok) {
@@ -54,12 +48,10 @@ async function request<T = unknown>(path: string, options: RequestInit = {}): Pr
   return res.json() as Promise<T>;
 }
 
-// Callable api(path, options?) — main usage pattern
 export function api<T = unknown>(path: string, options: RequestInit = {}): Promise<T> {
   return request<T>(path, options);
 }
 
-// Also expose method shortcuts for convenience
 api.get = <T = unknown>(path: string) => request<T>(path);
 api.post = <T = unknown>(path: string, body?: unknown) =>
   request<T>(path, { method: 'POST', body: JSON.stringify(body) });
