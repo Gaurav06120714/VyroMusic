@@ -15,7 +15,7 @@ interface LyricsPanelProps {
 type FetchState = 'idle' | 'loading' | 'loaded' | 'not-found' | 'error';
 
 function parseLyricsLines(lyrics: Lyrics): ParsedLyricLine[] {
-  // The API returns lines with timeMs; map to the ms alias used by this component.
+  
   return lyrics.lines.map(line => ({ ms: line.timeMs, text: line.text }));
 }
 
@@ -63,14 +63,12 @@ export function LyricsPanel({ trackId, trackTitle, currentMs, isOpen, onClose }:
     }
   }, []);
 
-  // Fetch when panel opens or track changes
   useEffect(() => {
     if (!isOpen || !trackId) return;
     if (trackId === fetchedTrackId && fetchState === 'loaded') return;
     void fetchLyrics(trackId);
   }, [isOpen, trackId, fetchedTrackId, fetchState, fetchLyrics]);
 
-  // Auto-scroll active line into view
   useEffect(() => {
     if (!isOpen || activeIndex < 0) return;
     activeLineRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -84,10 +82,10 @@ export function LyricsPanel({ trackId, trackTitle, currentMs, isOpen, onClose }:
       style={{ height: '50vh' }}
       aria-label="Lyrics panel"
     >
-      {/* Glass panel */}
+      {}
       <div className="relative h-full bg-black/80 backdrop-blur-2xl border-t border-white/10 flex flex-col">
 
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between px-6 pt-4 pb-2 shrink-0">
           <div>
             <p className="text-[10px] font-semibold tracking-widest text-white/30 uppercase mb-0.5">Lyrics</p>
@@ -104,13 +102,13 @@ export function LyricsPanel({ trackId, trackTitle, currentMs, isOpen, onClose }:
           </button>
         </div>
 
-        {/* Content */}
+        {}
         <div
           ref={containerRef}
           className="flex-1 overflow-y-auto px-6 pb-6 scroll-smooth"
           style={{ scrollbarWidth: 'none' }}
         >
-          {/* Loading skeleton */}
+          {}
           {fetchState === 'loading' && (
             <div className="flex flex-col gap-4 pt-4">
               {Array.from({ length: 8 }).map((_, i) => (
@@ -123,14 +121,14 @@ export function LyricsPanel({ trackId, trackTitle, currentMs, isOpen, onClose }:
             </div>
           )}
 
-          {/* No lyrics */}
+          {}
           {(fetchState === 'not-found' || fetchState === 'error') && (
             <div className="flex items-center justify-center h-full">
               <p className="text-white/20 text-sm">No lyrics available</p>
             </div>
           )}
 
-          {/* Lyric lines */}
+          {}
           {fetchState === 'loaded' && (
             <div className="flex flex-col gap-2 pt-4">
               {lines.map((line, i) => {
@@ -154,7 +152,7 @@ export function LyricsPanel({ trackId, trackTitle, currentMs, isOpen, onClose }:
           )}
         </div>
 
-        {/* Fade gradient at bottom */}
+        {}
         <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
       </div>
     </div>
