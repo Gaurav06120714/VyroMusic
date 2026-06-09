@@ -4,7 +4,6 @@ import { getDb } from '../db/client';
 export async function searchRoutes(app: FastifyInstance) {
   const db = getDb();
 
-  // Full search across tracks, albums, artists
   app.get('/search', async (req) => {
     const { q = '', limit = '20', offset = '0', type = 'track,album,artist' } = req.query as Record<string, string>;
     if (!q.trim()) return { tracks: [], albums: [], artists: [], total: 0 };
@@ -98,7 +97,6 @@ export async function searchRoutes(app: FastifyInstance) {
     };
   });
 
-  // Autocomplete — fast prefix search
   app.get('/search/autocomplete', async (req) => {
     const { q = '' } = req.query as { q: string };
     if (q.length < 2) return [];
